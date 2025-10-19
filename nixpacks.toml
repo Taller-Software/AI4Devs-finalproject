@@ -1,12 +1,13 @@
 [phases.setup]
 nixPkgs = [
-  'php84',
-  'php84Packages.composer',
-  'php84Extensions.pdo',
-  'php84Extensions.pdo_mysql',
-  'php84Extensions.mysqli',
-  'php84Extensions.mbstring',
-  'php84Extensions.opcache'
+  'php83',
+  'php83Packages.composer',
+  'php83Extensions.pdo',
+  'php83Extensions.pdo_mysql',
+  'php83Extensions.mysqli',
+  'php83Extensions.mbstring',
+  'php83Extensions.opcache',
+  'php83Extensions.session'
 ]
 
 [phases.install]
