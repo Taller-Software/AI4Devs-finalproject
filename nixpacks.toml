@@ -1,8 +1,8 @@
 [phases.setup]
-nixPkgs = ['php82', 'php82Packages.composer']
+nixPkgs = ['php84', 'php84Packages.composer', 'php84Extensions.pdo_mysql', 'php84Extensions.mysqli']
 
 [phases.install]
 cmds = ['composer install --no-dev --optimize-autoloader']
 
 [start]
-cmd = 'php -S 0.0.0.0:${PORT:-8080} -t public public/index.php'
+cmd = 'frankenphp php-server --listen :${PORT:-8080}'

@@ -69,12 +69,15 @@ class Router {
             }
         }
 
-        // Inicializar la base de datos si es necesario
-        try {
-            $initializer = new \App\Utils\ProjectInitializer();
-            $initializer->initializeProject();
-        } catch (\Exception $e) {
-            error_log('Error al inicializar el proyecto: ' . $e->getMessage());
+        // Inicializar el proyecto si es necesario (solo en desarrollo local)
+        // En producción (Railway), la estructura ya existe
+        if (\App\Utils\Environment::isDevelopment()) {
+            try {
+                $initializer = new \App\Utils\ProjectInitializer();
+                $initializer->initializeProject();
+            } catch (\Exception $e) {
+                error_log('Error al inicializar el proyecto: ' . $e->getMessage());
+            }
         }
 
         // Aplicar middlewares de seguridad

@@ -63,20 +63,14 @@ spl_autoload_register(function ($class) {
     }
 });
 
-// Inicializar el proyecto si es necesario
-try {
-    $initializer = new \App\Utils\ProjectInitializer();
-    $initializer->initializeProject();
-} catch (\Exception $e) {
-    error_log('Error al inicializar el proyecto: ' . $e->getMessage());
-    if (App\Utils\Environment::get('APP_DEBUG', false)) {
-        header('Content-Type: application/json');
-        http_response_code(500);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Error al inicializar el proyecto: ' . $e->getMessage()
-        ]);
-        exit;
+// Inicializar el proyecto si es necesario (solo en localhost)
+// En Railway, la estructura ya está en el código fuente
+if (App\Utils\Environment::isDevelopment()) {
+    try {
+        $initializer = new \App\Utils\ProjectInitializer();
+        $initializer->initializeProject();
+    } catch (\Exception $e) {
+        error_log('Error al inicializar el proyecto: ' . $e->getMessage());
     }
 }
 
