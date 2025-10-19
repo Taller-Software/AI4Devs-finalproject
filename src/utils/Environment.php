@@ -14,32 +14,53 @@ class Environment {
             return;
         }
 
-        $envFile = __DIR__ . '/../../.env';
-        if (!file_exists($envFile)) {
-            throw new \RuntimeException("El archivo .env no existe");
+        // PRIORIDAD 1: Variables de entorno del sistema (Railway, Docker, etc.)
+        // Cargar variables de entorno del sistema primero
+        foreach ($_ENV as $key => $value) {
+            self::$env[$key] = $value;
+        }
+        
+        // También revisar getenv() por si acaso
+        foreach ($_SERVER as $key => $value) {
+            if (!isset(self::$env[$key]) && is_string($value)) {
+                self::$env[$key] = $value;
+            }
         }
 
-        $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        foreach ($lines as $line) {
-            if (strpos($line, '#') === 0) {
-                continue;
-            }
+        // PRIORIDAD 2: Archivo .env (solo para desarrollo local)
+        $envFile = __DIR__ . '/../../.env';
+        if (file_exists($envFile)) {
+            $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($lines as $line) {
+                if (strpos($line, '#') === 0) {
+                    continue;
+                }
 
-            list($name, $value) = explode('=', $line, 2);
-            $name = trim($name);
-            $value = trim($value);
+                if (strpos($line, '=') === false) {
+                    continue;
+                }
 
-            // Manejar valores vacíos
-            if ($value === '""' || $value === "''") {
-                $value = '';
-            }
-            // Quitar comillas si existen
-            elseif (preg_match('/^"(.+)"$/', $value, $matches) || 
-                    preg_match("/^'(.+)'$/", $value, $matches)) {
-                $value = $matches[1];
-            }
+                list($name, $value) = explode('=', $line, 2);
+                $name = trim($name);
+                $value = trim($value);
 
-            self::$env[$name] = $value;
+                // No sobrescribir variables de entorno del sistema
+                if (isset(self::$env[$name])) {
+                    continue;
+                }
+
+                // Manejar valores vacíos
+                if ($value === '""' || $value === "''") {
+                    $value = '';
+                }
+                // Quitar comillas si existen
+                elseif (preg_match('/^"(.+)"$/', $value, $matches) || 
+                        preg_match("/^'(.+)'$/", $value, $matches)) {
+                    $value = $matches[1];
+                }
+
+                self::$env[$name] = $value;
+            }
         }
         
         self::$loaded = true;
@@ -49,7 +70,19 @@ class Environment {
         if (!self::$loaded) {
             self::loadEnv();
         }
-        return self::$env[$key] ?? $default;
+        
+        // Intentar primero con el key original
+        if (isset(self::$env[$key])) {
+            return self::$env[$key];
+        }
+        
+        // Fallback: Intentar con getenv() directamente (por si Railway no cargó en $_ENV)
+        $value = getenv($key);
+        if ($value !== false) {
+            return $value;
+        }
+        
+        return $default;
     }
 
     public static function isProduction(): bool {

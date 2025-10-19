@@ -1,11 +1,14 @@
 # Environment files (CRÍTICO: Contienen credenciales SMTP, DB, etc.)
 .env
-.env.*
 .env.production
 .env.local
+.env.development
+.env.test
 .env.*.local
-*.env
 .env.backup
+
+# EXCEPCIONES: Archivos de ejemplo (sin credenciales reales)
+!.env.example
 
 # Dependencias y paquetes
 /vendor/

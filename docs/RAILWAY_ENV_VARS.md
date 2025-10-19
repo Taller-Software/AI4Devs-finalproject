@@ -35,13 +35,16 @@ La aplicación **requiere** una base de datos MySQL configurada. Sigue estos pas
 
 ### 🗄️ Variables de Base de Datos
 
+**⚠️ IMPORTANTE**: El código soporta tanto `DB_PASSWORD` como `DB_PASS` por compatibilidad.  
+Railway usa `DB_PASSWORD` por defecto.
+
 ```bash
 # Conexión MySQL
-DB_HOST=${MYSQLHOST}          # O usa la variable directamente
-DB_PORT=${MYSQLPORT}          # Por defecto: 3306
-DB_NAME=${MYSQLDATABASE}      # Nombre de tu base de datos
-DB_USER=${MYSQLUSER}          # Usuario MySQL
-DB_PASSWORD=${MYSQLPASSWORD}  # Contraseña MySQL
+DB_HOST=${{MySQL.MYSQLHOST}}          # O usa el valor directamente
+DB_PORT=${{MySQL.MYSQLPORT}}          # Por defecto: 3306
+DB_NAME=${{MySQL.MYSQLDATABASE}}      # Nombre de tu base de datos (ej: railway)
+DB_USER=${{MySQL.MYSQLUSER}}          # Usuario MySQL
+DB_PASSWORD=${{MySQL.MYSQLPASSWORD}}  # Contraseña MySQL (REQUERIDO)
 ```
 
 ### 📧 Variables de Email (Gmail SMTP)

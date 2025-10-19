@@ -13,7 +13,8 @@ class DatabaseService {
         try {
             $host = Environment::get('DB_HOST');
             $user = Environment::get('DB_USER');
-            $pass = Environment::get('DB_PASS');
+            // Soportar tanto DB_PASS como DB_PASSWORD (Railway usa DB_PASSWORD)
+            $pass = Environment::get('DB_PASSWORD') ?? Environment::get('DB_PASS');
             
             if ($withoutDatabase) {
                 $dsn = "mysql:host={$host}";

@@ -58,11 +58,39 @@ async function checkDatabase() {
         const checkDbUrl = window.location.hostname === 'localhost' 
             ? '/AI4Devs-finalproject/src/api/check-db.php' 
             : '/api/check-db';
+        
+        console.log('[APP] Checking database at:', checkDbUrl);
         const response = await fetch(checkDbUrl);
+        console.log('[APP] Response status:', response.status, response.statusText);
+        
         if (!response.ok) {
-            throw new Error('Error en la respuesta del servidor');
+            // Intentar leer el cuerpo de la respuesta para más info
+            let errorDetails = '';
+            try {
+                const text = await response.text();
+                console.error('[APP] Error response body:', text);
+                errorDetails = text.substring(0, 200); // Primeros 200 caracteres
+            } catch (e) {
+                console.error('[APP] No se pudo leer el cuerpo del error');
+            }
+            
+            throw new Error(`Error ${response.status}: ${response.statusText}${errorDetails ? ' - ' + errorDetails : ''}`);
         }
+        
         const data = await response.json();
+        console.log('[APP] Database check response:', data);
+        
+        // Si el servidor respondió con información de debug, mostrarla
+        if (data.debug) {
+            console.log('[APP] Debug info:', data.debug);
+        }
+        if (data.missing_tables) {
+            console.log('[APP] Missing tables:', data.missing_tables);
+        }
+        if (data.error) {
+            console.error('[APP] Server error:', data.error);
+        }
+        
         return data.success;
     } catch (error) {
         console.error('Error al verificar la base de datos:', error);
@@ -77,7 +105,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('[APP] window.location.hostname:', window.location.hostname);
     
     try {
-        // Verificar la base de datos primero
+        // Crear instancias de las clases principales PRIMERO
+        // (para que los botones funcionen incluso si la DB falla)
+        console.log('[APP] Creando instancia de Auth...');
+        window.auth = new Auth();
+        console.log('[APP] Auth creado:', window.auth);
+        
+        console.log('[APP] Creando instancia de HerramientasManager...');
+        window.herramientas = new HerramientasManager();
+        console.log('[APP] HerramientasManager creado');
+        
+        // Verificar la base de datos después
         console.log('[APP] Verificando base de datos...');
         const dbOk = await checkDatabase();
         console.log('[APP] Database check result:', dbOk);
@@ -99,19 +137,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 loginForm.appendChild(errorDiv);
             }
             
-            // NO redirigir automáticamente
-            return;
+            // NO bloquear la aplicación, permitir que continúe
+            // (Los errores de API se manejarán individualmente)
         }
 
-        // Crear instancias de las clases principales
-        console.log('[APP] Creando instancia de Auth...');
-        window.auth = new Auth();
-        console.log('[APP] Auth creado:', window.auth);
-        
-        console.log('[APP] Creando instancia de HerramientasManager...');
-        window.herramientas = new HerramientasManager();
-        console.log('[APP] HerramientasManager creado');
-        
         // No crear instancia del dashboard en la página principal
         // El dashboard ahora es una ventana separada
 
