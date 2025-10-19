@@ -1,17 +1,13 @@
 [phases.setup]
 nixPkgs = [
   'php83',
-  'php83Packages.composer',
-  'php83Extensions.pdo',
-  'php83Extensions.pdo_mysql',
-  'php83Extensions.mysqli',
-  'php83Extensions.mbstring',
-  'php83Extensions.opcache',
-  'php83Extensions.session'
+  'php83Packages.composer'
 ]
 
 [phases.install]
-cmds = ['composer install --no-dev --optimize-autoloader']
+cmds = [
+  'composer install --no-dev --optimize-autoloader'
+]
 
 [start]
-cmd = 'frankenphp php-server --listen :${PORT:-8080}'
+cmd = 'php -S 0.0.0.0:${PORT:-8080} -t . index.php'
