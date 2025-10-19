@@ -84,6 +84,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
+// Cargar el Router explícitamente (por si el autoloader falla)
+require_once __DIR__ . '/routes/Router.php';
+
 // Iniciar la aplicación
 try {
     // Crear instancia del router y procesar la solicitud
