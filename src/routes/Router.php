@@ -75,7 +75,7 @@ class Router {
         
         // Normalizar la ruta: remover el prefijo /AI4Devs-finalproject si existe
         // Esto permite que funcione tanto en localhost como en producción
-        $path = preg_replace('#^/AI4Devs-finalproject#', '', $path);
+        $path = preg_replace('#^/AI4Devs-finalproject#i', '', $path);
 
         // Leer el body JSON si es POST
         $jsonBody = null;
