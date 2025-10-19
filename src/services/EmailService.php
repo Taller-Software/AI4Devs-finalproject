@@ -46,10 +46,14 @@ class EmailService {
             }
             
             // Configuración del remitente
-            $this->mailer->setFrom(
-                Environment::get('SMTP_FROM_EMAIL'),
-                Environment::get('SMTP_FROM_NAME')
-            );
+            $fromEmail = Environment::get('SMTP_FROM_EMAIL');
+            $fromName = Environment::get('SMTP_FROM_NAME');
+
+            if (empty($fromEmail) || empty($fromName)) {
+                throw new \Exception("Las variables de entorno SMTP_FROM_EMAIL o SMTP_FROM_NAME no están configuradas correctamente.");
+            }
+
+            $this->mailer->setFrom($fromEmail, $fromName);
             
             // Configuración general
             $this->mailer->CharSet = PHPMailer::CHARSET_UTF8;

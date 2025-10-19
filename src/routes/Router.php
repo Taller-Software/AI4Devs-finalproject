@@ -47,6 +47,11 @@ class Router {
         http_response_code($response->statusCode);
         header('Content-Type: application/json');
         
+        if (headers_sent()) {
+            Logger::error("No se pueden enviar encabezados, ya se enviaron previamente.", "Router::json");
+            return;
+        }
+        
         $jsonData = json_encode($response->toArray());
         if ($jsonData === false) {
             Logger::error("Error al codificar JSON: " . json_last_error_msg(), "Router::json");
