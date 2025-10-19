@@ -3,6 +3,12 @@
  * Punto de entrada para las peticiones API
  */
 
+// Cargar autoloader de Composer (para PHPMailer y otras dependencias)
+$composerAutoloader = __DIR__ . '/../vendor/autoload.php';
+if (file_exists($composerAutoloader)) {
+    require_once $composerAutoloader;
+}
+
 // Configuración inicial
 require_once __DIR__ . '/utils/Environment.php';
 require_once __DIR__ . '/utils/Logger.php';

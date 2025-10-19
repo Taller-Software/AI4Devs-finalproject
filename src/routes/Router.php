@@ -9,10 +9,7 @@ require_once __DIR__ . '/../utils/Environment.php';
 require_once __DIR__ . '/../utils/SessionManager.php';
 require_once __DIR__ . '/../services/DatabaseService.php';
 require_once __DIR__ . '/../services/RateLimitService.php';
-// Cargar PHPMailer antes de EmailService
-require_once __DIR__ . '/../../lib/PHPMailer/src/Exception.php';
-require_once __DIR__ . '/../../lib/PHPMailer/src/PHPMailer.php';
-require_once __DIR__ . '/../../lib/PHPMailer/src/SMTP.php';
+// PHPMailer se carga automáticamente via Composer autoloader
 require_once __DIR__ . '/../services/EmailService.php';
 require_once __DIR__ . '/../services/AuthService.php';
 require_once __DIR__ . '/../services/HerramientaService.php';
