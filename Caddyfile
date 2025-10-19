@@ -9,22 +9,22 @@
 		Access-Control-Allow-Headers "Content-Type, Authorization, X-CSRF-Token"
 	}
 
-	# Archivos PHP en /public (diagnóstico)
+	# Archivos PHP en /public (diagnóstico) - FrankenPHP
 	@php {
 		path *.php
 	}
 	handle @php {
-		php_fastcgi unix//run/php/php-fpm.sock
+		php
 	}
 
-	# Peticiones API
+	# Peticiones API - FrankenPHP
 	@api {
 		path /api/*
 	}
 	handle @api {
 		root * /app
 		rewrite * /src/index.php
-		php_fastcgi unix//run/php/php-fpm.sock
+		php
 	}
 
 	# Archivos estáticos (js, css, imágenes, etc.)
