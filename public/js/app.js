@@ -83,13 +83,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('[APP] Database check result:', dbOk);
         
         if (!dbOk) {
-            showToast('Inicializando base de datos...', 'info');
-            // Detectar ambiente: localhost vs producción
-            const initUrl = window.location.hostname === 'localhost' 
-                ? '/AI4Devs-finalproject/src/init.php' 
-                : '/api/init';
-            console.log('[APP] Redirigiendo a:', initUrl);
-            window.location.href = initUrl;
+            console.log('[APP] Base de datos no inicializada');
+            showToast('⚠️ Base de datos no configurada. Contacta al administrador.', 'error');
+            
+            // Mostrar mensaje de error en la interfaz
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'mt-4 p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-200 text-sm';
+                errorDiv.innerHTML = `
+                    <strong class="block mb-2">⚠️ Error de Configuración</strong>
+                    <p>La base de datos no está configurada correctamente.</p>
+                    <p class="mt-2 text-xs">Por favor, contacta al administrador del sistema.</p>
+                `;
+                loginForm.appendChild(errorDiv);
+            }
+            
+            // NO redirigir automáticamente
             return;
         }
 
