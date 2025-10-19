@@ -9,6 +9,14 @@
 		Access-Control-Allow-Headers "Content-Type, Authorization, X-CSRF-Token"
 	}
 
+	# Archivos PHP en /public (diagnóstico)
+	@php {
+		path *.php
+	}
+	handle @php {
+		php_fastcgi unix//run/php/php-fpm.sock
+	}
+
 	# Peticiones API
 	@api {
 		path /api/*
