@@ -1,0 +1,12 @@
+{
+  "name": "astillero-tools",
+  "version": "1.0.0",
+  "description": "Sistema de Gestión de Herramientas - Astillero La Roca",
+  "scripts": {
+    "start": "php -S 0.0.0.0:$PORT -t public",
+    "install": "composer install --no-dev --optimize-autoloader"
+  },
+  "engines": {
+    "php": "^8.2"
+  }
+}

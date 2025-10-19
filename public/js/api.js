@@ -1,5 +1,8 @@
 // Configuración de la API
-const API_BASE_URL = '/AI4Devs-finalproject/api';
+// Detecta automáticamente si está en local o en producción
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? '/AI4Devs-finalproject/api'  // Local con subdirectorio
+    : '/api';                        // Railway en raíz
 
 // Funciones de la API
 const api = {
