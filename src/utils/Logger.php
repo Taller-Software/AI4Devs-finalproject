@@ -11,7 +11,7 @@ class Logger {
 
         $logDir = __DIR__ . '/logs';
         if (!file_exists($logDir)) {
-            mkdir($logDir, 0777, true);
+            @mkdir($logDir, 0777, true);
         }
 
         self::$logFile = $logDir . '/app.log';

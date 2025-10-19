@@ -12,10 +12,11 @@ try {
     error_log("[CHECK-DB] Iniciando verificación de base de datos");
     
     // Verificar que tenemos las variables de entorno
-    $dbHost = Environment::get('DB_HOST');
-    $dbName = Environment::get('DB_NAME');
-    $dbUser = Environment::get('DB_USER');
-    $dbPass = Environment::get('DB_PASSWORD') ?? Environment::get('DB_PASS');
+    // Intentar primero con las variables estándar, luego con las de Railway
+    $dbHost = Environment::get('DB_HOST') ?? Environment::get('MYSQLHOST');
+    $dbName = Environment::get('DB_NAME') ?? Environment::get('MYSQLDATABASE');
+    $dbUser = Environment::get('DB_USER') ?? Environment::get('MYSQLUSER');
+    $dbPass = Environment::get('DB_PASSWORD') ?? Environment::get('DB_PASS') ?? Environment::get('MYSQLPASSWORD');
     
     error_log("[CHECK-DB] DB_HOST: " . ($dbHost ?? 'NO CONFIGURADO'));
     error_log("[CHECK-DB] DB_NAME: " . ($dbName ?? 'NO CONFIGURADO'));

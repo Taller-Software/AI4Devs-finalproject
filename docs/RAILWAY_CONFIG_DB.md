@@ -25,23 +25,25 @@ El endpoint `/api/check-db` responde con:
    - Railway creará automáticamente un servicio MySQL
 
 2. **Configurar las variables en tu servicio web:**
+   
+   Railway expone automáticamente las variables del MySQL como `MYSQLHOST`, `MYSQLDATABASE`, etc. Tu código ya detecta estas variables automáticamente, pero para mayor claridad puedes configurar aliases:
+
    - Ve a tu servicio web (el que corre la aplicación PHP)
    - Haz clic en la pestaña `Variables`
+   - **IMPORTANTE:** Verifica el nombre exacto de tu servicio MySQL (puede ser `MySQL`, `mysql`, o tener otro nombre)
    - Agrega las siguientes variables usando referencias al servicio MySQL:
 
    ```
-   DB_HOST=${{MySQL.MYSQL_HOST}}
-   DB_NAME=${{MySQL.MYSQL_DATABASE}}
-   DB_USER=${{MySQL.MYSQL_USER}}
-   DB_PASS=${{MySQL.MYSQL_PASSWORD}}
+   DB_HOST=${{MySQL.MYSQLHOST}}
+   DB_NAME=${{MySQL.MYSQLDATABASE}}
+   DB_USER=${{MySQL.MYSQLUSER}}
+   DB_PASS=${{MySQL.MYSQLPASSWORD}}
+   DB_PORT=${{MySQL.MYSQLPORT}}
    ```
 
-   **Nota:** Reemplaza `MySQL` con el nombre exacto de tu servicio MySQL si es diferente.
+   **Nota:** Reemplaza `MySQL` con el nombre exacto de tu servicio MySQL si es diferente. Puedes verificarlo en la lista de servicios de tu proyecto.
 
-3. **Agregar variables adicionales:**
-   ```
-   DB_PORT=${{MySQL.MYSQL_PORT}}
-   ```
+   **Alternativa - Sin aliases:** El código ya detecta automáticamente `MYSQLHOST`, `MYSQLDATABASE`, `MYSQLUSER`, y `MYSQLPASSWORD`, así que técnicamente no necesitas agregar estas variables si Railway ya las expone.
 
 ### Opción 2: Usar Base de Datos Externa
 

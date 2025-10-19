@@ -11,15 +11,16 @@ class DatabaseService {
      */
     private static function createConnection(bool $withoutDatabase = false): PDO {
         try {
-            $host = Environment::get('DB_HOST');
-            $user = Environment::get('DB_USER');
-            // Soportar tanto DB_PASS como DB_PASSWORD (Railway usa DB_PASSWORD)
-            $pass = Environment::get('DB_PASSWORD') ?? Environment::get('DB_PASS');
+            // Intentar primero con variables estándar, luego con variables de Railway
+            $host = Environment::get('DB_HOST') ?? Environment::get('MYSQLHOST');
+            $user = Environment::get('DB_USER') ?? Environment::get('MYSQLUSER');
+            // Soportar DB_PASS, DB_PASSWORD (estándar) y MYSQLPASSWORD (Railway)
+            $pass = Environment::get('DB_PASSWORD') ?? Environment::get('DB_PASS') ?? Environment::get('MYSQLPASSWORD');
             
             if ($withoutDatabase) {
                 $dsn = "mysql:host={$host}";
             } else {
-                $dbName = Environment::get('DB_NAME');
+                $dbName = Environment::get('DB_NAME') ?? Environment::get('MYSQLDATABASE');
                 // Intentar primero sin la base de datos
                 try {
                     $tempConn = new PDO("mysql:host={$host}", $user, $pass);
