@@ -28,7 +28,11 @@ try {
     ]);
     
     // Redirigir a la página principal
-    header('Location: /AI4Devs-finalproject/public/');
+    // Detectar si estamos en localhost o en producción
+    $baseUrl = (strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false) 
+        ? '/AI4Devs-finalproject/public/' 
+        : '/';
+    header('Location: ' . $baseUrl);
     exit;
     
 } catch (Exception $e) {

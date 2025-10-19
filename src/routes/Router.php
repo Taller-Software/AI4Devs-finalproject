@@ -41,6 +41,10 @@ class Router {
         // Extraer la ruta base de la URI
         $path = parse_url($uri, PHP_URL_PATH);
         $path = rtrim($path, '/');
+        
+        // Normalizar la ruta: remover el prefijo /AI4Devs-finalproject si existe
+        // Esto permite que funcione tanto en localhost como en producción
+        $path = preg_replace('#^/AI4Devs-finalproject#', '', $path);
 
         // Leer el body JSON si es POST
         $jsonBody = null;
@@ -97,15 +101,10 @@ class Router {
         // Extraer ID de la URL si existe
         preg_match('/\/api\/herramientas\/(\d+)/', $path, $matches);
         $id = $matches[1] ?? null;
-        
-        if (!$id) {
-            preg_match('/\/AI4Devs-finalproject\/api\/herramientas\/(\d+)/', $path, $matches);
-            $id = $matches[1] ?? null;
-        }
 
         try {
             switch (true) {
-                case $method === 'POST' && ($path === '/api/login/send-code' || $path === '/AI4Devs-finalproject/api/login/send-code'):
+                case $method === 'POST' && $path === '/api/login/send-code':
                     if ($jsonBody === null) {
                         self::json(new ResponseDTO(false, "Invalid JSON payload", null, 400));
                         return;
@@ -113,51 +112,51 @@ class Router {
                     self::json((new AuthEndpoint())->sendCode($jsonBody));
                     break;
 
-                case $method === 'POST' && ($path === '/api/login/validate-code' || $path === '/AI4Devs-finalproject/api/login/validate-code'):
+                case $method === 'POST' && $path === '/api/login/validate-code':
                     self::json((new AuthEndpoint())->validateCode());
                     break;
 
-                case $method === 'GET' && ($path === '/api/login/check-session' || $path === '/AI4Devs-finalproject/api/login/check-session'):
+                case $method === 'GET' && $path === '/api/login/check-session':
                     self::json((new AuthEndpoint())->checkSession());
                     break;
 
-                case $method === 'GET' && ($path === '/api/csrf-token' || $path === '/AI4Devs-finalproject/api/csrf-token'):
+                case $method === 'GET' && $path === '/api/csrf-token':
                     self::json((new AuthEndpoint())->getCsrfToken());
                     break;
 
-                case $method === 'POST' && ($path === '/api/login/logout' || $path === '/AI4Devs-finalproject/api/login/logout'):
+                case $method === 'POST' && $path === '/api/login/logout':
                     self::json((new AuthEndpoint())->logout());
                     break;
 
-                case $method === 'GET' && ($path === '/api/herramientas' || $path === '/AI4Devs-finalproject/api/herramientas'):
+                case $method === 'GET' && $path === '/api/herramientas':
                     self::json((new HerramientasEndpoint())->index());
                     break;
 
-                case $method === 'GET' && ($path === "/api/herramientas/$id/estado" || $path === "/AI4Devs-finalproject/api/herramientas/$id/estado"):
+                case $method === 'GET' && $path === "/api/herramientas/$id/estado":
                     self::json((new HerramientasEndpoint())->getEstado($id));
                     break;
 
-                case $method === 'POST' && ($path === "/api/herramientas/$id/usar" || $path === "/AI4Devs-finalproject/api/herramientas/$id/usar"):
+                case $method === 'POST' && $path === "/api/herramientas/$id/usar":
                     self::json((new HerramientasEndpoint())->usar($id));
                     break;
 
-                case $method === 'POST' && ($path === "/api/herramientas/$id/dejar" || $path === "/AI4Devs-finalproject/api/herramientas/$id/dejar"):
+                case $method === 'POST' && $path === "/api/herramientas/$id/dejar":
                     self::json((new HerramientasEndpoint())->dejar($id));
                     break;
 
-                case $method === 'GET' && ($path === "/api/herramientas/$id/historial" || $path === "/AI4Devs-finalproject/api/herramientas/$id/historial"):
+                case $method === 'GET' && $path === "/api/herramientas/$id/historial":
                     self::json((new HerramientasEndpoint())->historial($id));
                     break;
 
-                case $method === 'GET' && ($path === '/api/dashboard' || $path === '/AI4Devs-finalproject/api/dashboard'):
+                case $method === 'GET' && $path === '/api/dashboard':
                     self::json((new DashboardEndpoint())->index());
                     break;
 
-                case $method === 'GET' && ($path === '/api/historico' || $path === '/AI4Devs-finalproject/api/historico'):
+                case $method === 'GET' && $path === '/api/historico':
                     self::json((new HistoricoEndpoint())->index());
                     break;
 
-                case $method === 'GET' && ($path === '/api/ubicaciones' || $path === '/AI4Devs-finalproject/api/ubicaciones'):
+                case $method === 'GET' && $path === '/api/ubicaciones':
                     self::json((new HerramientasEndpoint())->getUbicaciones());
                     break;
 
@@ -172,13 +171,9 @@ class Router {
     private static function isLoginRoute(string $path): bool {
         $loginPatterns = [
             '/api/login/send-code',
-            '/AI4Devs-finalproject/api/login/send-code',
             '/api/login/validate-code',
-            '/AI4Devs-finalproject/api/login/validate-code',
             '/api/login/check-session',
-            '/AI4Devs-finalproject/api/login/check-session',
-            '/api/csrf-token',
-            '/AI4Devs-finalproject/api/csrf-token'
+            '/api/csrf-token'
         ];
         
         foreach ($loginPatterns as $pattern) {
@@ -192,8 +187,7 @@ class Router {
 
     private static function isLogoutRoute(string $path): bool {
         $logoutPatterns = [
-            '/api/login/logout',
-            '/AI4Devs-finalproject/api/login/logout'
+            '/api/login/logout'
         ];
         
         foreach ($logoutPatterns as $pattern) {
