@@ -134,6 +134,11 @@ class Router {
                     require_once __DIR__ . '/../api/check-db.php';
                     exit;
 
+                case $method === 'GET' && $path === '/api/railway-debug':
+                    // Diagnóstico de Railway (variables de entorno)
+                    require_once __DIR__ . '/../api/railway-debug.php';
+                    exit;
+
                 case $method === 'POST' && $path === '/api/login/logout':
                     self::json((new AuthEndpoint())->logout());
                     break;
@@ -185,7 +190,8 @@ class Router {
             '/api/login/check-session',
             '/api/csrf-token',
             '/api/init',
-            '/api/check-db'
+            '/api/check-db',
+            '/api/railway-debug'
         ];
         
         foreach ($loginPatterns as $pattern) {
