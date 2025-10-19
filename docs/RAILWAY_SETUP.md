@@ -9,6 +9,15 @@ Antes de desplegar, asegúrate de tener:
 - [ ] Gmail App Password generada (para SMTP)
 - [ ] Acceso a las credenciales necesarias
 
+## 📦 Archivos de Configuración Railway
+
+El proyecto incluye los siguientes archivos para Railway:
+
+- **`nixpacks.toml`**: Configuración principal de Railway (instala PHP 8.2 y Composer)
+- **`package.json`**: Define el comando de inicio del servidor
+- **`railway-router.php`**: Router simplificado para servir la aplicación
+- **`railway-init-db.sh`**: Script para inicializar la base de datos
+
 ---
 
 ## 🚀 Paso 1: Crear Proyecto en Railway

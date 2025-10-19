@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "description": "Sistema de Gestión de Herramientas - Astillero La Roca",
   "scripts": {
-    "start": "php -S 0.0.0.0:$PORT -t public",
-    "install": "composer install --no-dev --optimize-autoloader"
+    "start": "php -S 0.0.0.0:$PORT railway-router.php"
   },
   "engines": {
-    "php": "^8.2"
+    "node": ">=18.0.0"
   }
 }
