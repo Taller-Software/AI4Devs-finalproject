@@ -15,4 +15,4 @@ cmds = [
 ]
 
 [start]
-cmd = 'php -c php.ini -d display_errors=1 -d error_reporting=E_ALL -S 0.0.0.0:${PORT:-8080} -t . index.php'
+cmd = 'php -d display_errors=1 -d error_reporting=E_ALL -S 0.0.0.0:${PORT:-8080} -t . index.php'
