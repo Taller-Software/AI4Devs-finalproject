@@ -4,11 +4,23 @@
  * Railway sirve desde la raíz sin subdirectorios
  */
 
+// Logging para debug
+error_log("REQUEST_URI: " . ($_SERVER['REQUEST_URI'] ?? 'no-uri'));
+error_log("SCRIPT_NAME: " . ($_SERVER['SCRIPT_NAME'] ?? 'no-script'));
+
 $uri = urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+error_log("Parsed URI: " . $uri);
 
 // Si es la raíz, servir index.html
 if ($uri === '/' || $uri === '') {
-    readfile(__DIR__ . '/public/index.html');
+    error_log("Serving index.html");
+    if (file_exists(__DIR__ . '/public/index.html')) {
+        readfile(__DIR__ . '/public/index.html');
+    } else {
+        error_log("ERROR: index.html not found");
+        http_response_code(500);
+        echo "Error: index.html not found";
+    }
     exit;
 }
 
