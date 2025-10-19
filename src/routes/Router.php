@@ -124,6 +124,16 @@ class Router {
                     self::json((new AuthEndpoint())->getCsrfToken());
                     break;
 
+                case $method === 'GET' && $path === '/api/init':
+                    // Ruta de inicialización de base de datos
+                    require_once __DIR__ . '/../init.php';
+                    exit;
+
+                case $method === 'GET' && $path === '/api/check-db':
+                    // Ruta de verificación de base de datos
+                    require_once __DIR__ . '/../api/check-db.php';
+                    exit;
+
                 case $method === 'POST' && $path === '/api/login/logout':
                     self::json((new AuthEndpoint())->logout());
                     break;
@@ -173,7 +183,9 @@ class Router {
             '/api/login/send-code',
             '/api/login/validate-code',
             '/api/login/check-session',
-            '/api/csrf-token'
+            '/api/csrf-token',
+            '/api/init',
+            '/api/check-db'
         ];
         
         foreach ($loginPatterns as $pattern) {

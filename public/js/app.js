@@ -54,7 +54,11 @@ window.showToast = (message, type = 'info') => window.toast.show(message, type);
 // Verificación de la base de datos
 async function checkDatabase() {
     try {
-        const response = await fetch('/AI4Devs-finalproject/src/api/check-db.php');
+        // Detectar ambiente: localhost vs producción
+        const checkDbUrl = window.location.hostname === 'localhost' 
+            ? '/AI4Devs-finalproject/src/api/check-db.php' 
+            : '/api/check-db';
+        const response = await fetch(checkDbUrl);
         if (!response.ok) {
             throw new Error('Error en la respuesta del servidor');
         }
@@ -73,7 +77,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const dbOk = await checkDatabase();
         if (!dbOk) {
             showToast('Inicializando base de datos...', 'info');
-            window.location.href = '/AI4Devs-finalproject/src/init.php';
+            // Detectar ambiente: localhost vs producción
+            const initUrl = window.location.hostname === 'localhost' 
+                ? '/AI4Devs-finalproject/src/init.php' 
+                : '/api/init';
+            window.location.href = initUrl;
             return;
         }
 
