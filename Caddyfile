@@ -1,0 +1,19 @@
+:8080 {
+	root * /app/public
+	encode gzip
+	php_fastcgi unix//run/php/php-fpm.sock
+	file_server
+
+	# Redirigir peticiones API
+	@api {
+		path /api/*
+	}
+	handle @api {
+		root * /app
+		rewrite * /src/index.php
+		php_fastcgi unix//run/php/php-fpm.sock
+	}
+
+	# SPA fallback
+	try_files {path} /index.html
+}
