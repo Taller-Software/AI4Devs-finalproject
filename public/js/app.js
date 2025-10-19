@@ -72,22 +72,35 @@ async function checkDatabase() {
 
 // Inicialización de la aplicación
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log('[APP] DOMContentLoaded event fired');
+    console.log('[APP] API_BASE_URL:', API_BASE_URL);
+    console.log('[APP] window.location.hostname:', window.location.hostname);
+    
     try {
         // Verificar la base de datos primero
+        console.log('[APP] Verificando base de datos...');
         const dbOk = await checkDatabase();
+        console.log('[APP] Database check result:', dbOk);
+        
         if (!dbOk) {
             showToast('Inicializando base de datos...', 'info');
             // Detectar ambiente: localhost vs producción
             const initUrl = window.location.hostname === 'localhost' 
                 ? '/AI4Devs-finalproject/src/init.php' 
                 : '/api/init';
+            console.log('[APP] Redirigiendo a:', initUrl);
             window.location.href = initUrl;
             return;
         }
 
         // Crear instancias de las clases principales
+        console.log('[APP] Creando instancia de Auth...');
         window.auth = new Auth();
+        console.log('[APP] Auth creado:', window.auth);
+        
+        console.log('[APP] Creando instancia de HerramientasManager...');
         window.herramientas = new HerramientasManager();
+        console.log('[APP] HerramientasManager creado');
         
         // No crear instancia del dashboard en la página principal
         // El dashboard ahora es una ventana separada

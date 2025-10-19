@@ -1,6 +1,7 @@
 // Gestión de autenticación
 class Auth {
     constructor() {
+        console.log('[AUTH] Constructor llamado');
         // Referencias a elementos del DOM
         this.loginContainer = document.getElementById('loginForm');
         this.emailForm = document.getElementById('emailForm');
@@ -8,11 +9,20 @@ class Auth {
         this.mainContent = document.getElementById('mainContent');
         this.btnLogout = document.getElementById('btnLogout');
         
+        console.log('[AUTH] Elementos DOM:', {
+            loginContainer: !!this.loginContainer,
+            emailForm: !!this.emailForm,
+            codeForm: !!this.codeForm,
+            mainContent: !!this.mainContent,
+            btnLogout: !!this.btnLogout
+        });
+        
         this.setupEventListeners();
         this.checkSession();
     }
 
     setupEventListeners() {
+        console.log('[AUTH] setupEventListeners llamado');
         // Prevenir el envío de formularios
         this.emailForm.addEventListener('submit', (e) => e.preventDefault());
         this.codeForm.addEventListener('submit', (e) => e.preventDefault());
@@ -20,9 +30,18 @@ class Auth {
         const btnSendCode = document.getElementById('btnSendCode');
         const btnValidateCode = document.getElementById('btnValidateCode');
         
+        console.log('[AUTH] Botones encontrados:', {
+            btnSendCode: !!btnSendCode,
+            btnValidateCode: !!btnValidateCode
+        });
+        
         // Manejar clicks en botones
         if (btnSendCode) {
-            btnSendCode.addEventListener('click', () => this.handleLoginSubmit());
+            console.log('[AUTH] Agregando listener a btnSendCode');
+            btnSendCode.addEventListener('click', () => {
+                console.log('[AUTH] btnSendCode CLICK detectado');
+                this.handleLoginSubmit();
+            });
         }
         
         if (btnValidateCode) {
@@ -56,20 +75,28 @@ class Auth {
     }
 
     async handleLoginSubmit() {
+        console.log('[AUTH] handleLoginSubmit llamado');
         const emailInput = document.getElementById('email');
+        console.log('[AUTH] emailInput encontrado:', !!emailInput);
+        
         if (!emailInput) {
             showToast('Error: Campo de email no encontrado', 'error');
             return;
         }
         
         const email = emailInput.value?.trim();
+        console.log('[AUTH] Email value:', email);
+        
         if (!email) {
             showToast('Por favor, ingrese un email', 'error');
             return;
         }
         
+        console.log('[AUTH] Enviando código a:', email);
+        
         try {
             const response = await api.sendLoginCode(email);
+            console.log('[AUTH] Respuesta recibida:', response);
             
             // Manejar rate limiting
             if (response.statusCode === 429) {

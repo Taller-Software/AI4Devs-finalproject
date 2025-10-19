@@ -4,6 +4,9 @@ const API_BASE_URL = window.location.hostname === 'localhost' || window.location
     ? '/AI4Devs-finalproject/api'  // Local con subdirectorio
     : '/api';                        // Railway en raíz
 
+console.log('[API] API_BASE_URL configurado como:', API_BASE_URL);
+console.log('[API] hostname:', window.location.hostname);
+
 // Funciones de la API
 const api = {
     csrfToken: null,
@@ -41,6 +44,9 @@ const api = {
         return headers;
     },
     async sendLoginCode(email) {
+        console.log('[API] sendLoginCode llamado con email:', email);
+        console.log('[API] URL completa:', `${API_BASE_URL}/login/send-code`);
+        
         try {
             const response = await fetch(`${API_BASE_URL}/login/send-code`, {
                 method: 'POST',
@@ -48,6 +54,9 @@ const api = {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
             });
+
+            console.log('[API] Response status:', response.status);
+            console.log('[API] Response ok:', response.ok);
 
             // Obtener el texto de la respuesta primero
             const responseText = await response.text();
