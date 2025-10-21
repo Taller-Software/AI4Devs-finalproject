@@ -11,6 +11,8 @@ require_once __DIR__ . '/../services/DatabaseService.php';
 require_once __DIR__ . '/../services/RateLimitService.php';
 // PHPMailer se carga automáticamente via Composer autoloader
 require_once __DIR__ . '/../services/EmailService.php';
+// Resend se carga automáticamente via Composer autoloader
+require_once __DIR__ . '/../services/EmailServiceRailway.php';
 require_once __DIR__ . '/../services/AuthService.php';
 require_once __DIR__ . '/../services/HerramientaService.php';
 require_once __DIR__ . '/../services/HistoricoService.php';
