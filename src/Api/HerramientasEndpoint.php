@@ -34,14 +34,20 @@ class HerramientasEndpoint {
 
     public function usar(?int $id): ResponseDTO {
         try {
+            error_log("[ENDPOINT] usar() llamado con ID: " . ($id ?? 'NULL'));
+            
             if (!$id || !Validator::validateId($id)) {
+                error_log("[ENDPOINT] ID inválido: " . ($id ?? 'NULL'));
                 return new ResponseDTO(false, "ID de herramienta inválido", null, 400);
             }
 
             // Leer datos del body JSON
+            error_log("[ENDPOINT] Leyendo body JSON...");
             $jsonData = json_decode(file_get_contents('php://input'), true);
+            error_log("[ENDPOINT] JSON Data: " . json_encode($jsonData));
             
             if (!$jsonData) {
+                error_log("[ENDPOINT] JSON inválido o vacío");
                 return new ResponseDTO(false, "Datos inválidos", null, 400);
             }
 
@@ -50,16 +56,19 @@ class HerramientasEndpoint {
 
             // Validar campos requeridos
             if (empty($ubicacion_id)) {
+                error_log("[ENDPOINT] ubicacion_id vacío");
                 return new ResponseDTO(false, "El campo ubicacion_id es obligatorio", null, 400);
             }
 
             // Validar ubicación
             if (!Validator::validateId($ubicacion_id)) {
+                error_log("[ENDPOINT] ubicacion_id inválido: $ubicacion_id");
                 return new ResponseDTO(false, "ID de ubicación inválido", null, 400);
             }
 
             // Validar fecha fin si se proporciona
             if (!empty($fecha_fin) && !Validator::validateDate($fecha_fin)) {
+                error_log("[ENDPOINT] fecha_fin inválida: $fecha_fin");
                 return new ResponseDTO(false, "La fecha fin proporcionada no es válida", null, 400);
             }
 
@@ -70,8 +79,11 @@ class HerramientasEndpoint {
                 'operario_uuid' => $jsonData['operario_uuid'] ?? null
             ];
 
+            error_log("[ENDPOINT] Llamando a controller->usar() con data: " . json_encode($data));
             return $this->controller->usar($id, $data);
         } catch (\Exception $e) {
+            error_log("[ENDPOINT] ERROR capturado: " . $e->getMessage());
+            error_log("[ENDPOINT] Stack trace: " . $e->getTraceAsString());
             return new ResponseDTO(false, "Error al usar la herramienta: " . $e->getMessage(), null, 500);
         }
     }
