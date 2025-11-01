@@ -17,12 +17,12 @@ class HerramientaDTO {
 
     public static function fromArray(array $data): self {
         return new self(
-            id: $data['id'] ?? 0,
-            nombre: $data['nombre'] ?? '',
-            codigo: $data['codigo'] ?? '',
-            activo: $data['activo'] ?? true,
-            ubicacion_actual: $data['ubicacion_actual'] ?? '',
-            ubicacion_id: $data['ubicacion_id'] ?? null,
+            id: (int)($data['id'] ?? 0),
+            nombre: (string)($data['nombre'] ?? ''),
+            codigo: (string)($data['codigo'] ?? ''),
+            activo: (bool)($data['activo'] ?? true),
+            ubicacion_actual: (string)($data['ubicacion_actual'] ?? ''),
+            ubicacion_id: isset($data['ubicacion_id']) ? (int)$data['ubicacion_id'] : null,
             operario_actual: $data['operario_actual'] ?? null,
             operario_uuid: $data['operario_uuid'] ?? null,
             fecha_inicio: $data['fecha_inicio'] ?? null,
