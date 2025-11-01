@@ -56,35 +56,18 @@ class Dashboard {
         try {
             const response = await api.getDashboard();
             if (response.success) {
-                console.log('=== DATOS DEL DASHBOARD ===');
-                console.log('Total herramientas:', response.data.length);
-                response.data.forEach((h, index) => {
-                    console.log(`\nHerramienta ${index + 1}:`, {
-                        nombre: h.nombre,
-                        codigo: h.codigo,
-                        ubicacion_actual: h.ubicacion_actual,
-                        operario_actual: h.operario_actual,
-                        fecha_inicio: h.fecha_inicio,
-                        fecha_fin: h.fecha_fin,
-                        'EN_USO': h.operario_actual != null ? 'SÍ' : 'NO'
-                    });
-                });
-                console.log('===========================\n');
-                
                 this.renderHerramientas(response.data);
                 this.updateRefreshTimestamp();
             } else {
                 showToast(response.message, 'error');
             }
         } catch (error) {
-            console.error('Error al cargar dashboard:', error);
             showToast('Error al cargar el dashboard', 'error');
         }
     }
 
     renderHerramientas(herramientas) {
         if (!this.dashboardContent) {
-            console.error('Elemento dashboardContent no encontrado');
             return;
         }
         
@@ -114,8 +97,6 @@ class Dashboard {
         if (totalElement) totalElement.textContent = total;
         if (disponiblesElement) disponiblesElement.textContent = disponibles;
         if (ocupadasElement) ocupadasElement.textContent = ocupadas;
-        
-        console.log('Estadísticas actualizadas:', { total, disponibles, ocupadas });
     }
 
     createHerramientaCard(herramienta) {
@@ -127,13 +108,6 @@ class Dashboard {
         const bgColor = estado === 'disponible' 
             ? 'bg-gradient-to-br from-green-900 to-emerald-900 border border-green-600' 
             : 'bg-gradient-to-br from-red-900 to-rose-900 border border-red-600';
-        
-        // Debug: mostrar en consola el estado calculado
-        console.log(`${herramienta.nombre} - Estado: ${estado}`, {
-            operario_actual: herramienta.operario_actual,
-            fecha_fin: herramienta.fecha_fin,
-            enUso: enUso
-        });
         
         return `
             <div class="${bgColor} p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
