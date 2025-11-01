@@ -133,7 +133,8 @@ class DejarHerramienta {
             }
 
             const response = await api.dejarHerramienta(herramientaId, {
-                ubicacion_id: parseInt(ubicacionId)
+                ubicacion_id: parseInt(ubicacionId),
+                fecha_fin: new Date().toISOString()
             });
 
             if (response.success) {

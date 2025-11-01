@@ -36,9 +36,10 @@ class HerramientaController {
 
             // Obtener datos del array (ya viene parseado desde el endpoint)
             $ubicacionId = $data['ubicacion_id'] ?? null;
+            $fechaInicio = $data['fecha_inicio'] ?? null;
             $fechaFin = $data['fecha_fin'] ?? null;
             
-            error_log("[CONTROLLER] ubicacionId: " . ($ubicacionId ?? 'NULL') . ", fechaFin: " . ($fechaFin ?? 'NULL'));
+            error_log("[CONTROLLER] ubicacionId: " . ($ubicacionId ?? 'NULL') . ", fechaInicio: " . ($fechaInicio ?? 'NULL') . ", fechaFin: " . ($fechaFin ?? 'NULL'));
 
             if (!$ubicacionId) {
                 error_log("[CONTROLLER] ERROR: Datos incompletos");
@@ -50,6 +51,7 @@ class HerramientaController {
             $result = $this->herramientaService->usarHerramienta(
                 $id,
                 $ubicacionId,
+                $fechaInicio,
                 $fechaFin
             );
             error_log("[CONTROLLER] Resultado: " . json_encode($result));
@@ -64,12 +66,13 @@ class HerramientaController {
     public function dejar(int $id, array $data = []): ResponseDTO {
         // Obtener datos del array (ya viene parseado desde el endpoint)
         $ubicacionId = $data['ubicacion_id'] ?? null;
+        $fechaFin = $data['fecha_fin'] ?? null;
 
         if (!$ubicacionId) {
             return new ResponseDTO(false, "Ubicación no especificada", null, 400);
         }
 
-        return $this->herramientaService->dejarHerramienta($id, $ubicacionId);
+        return $this->herramientaService->dejarHerramienta($id, $ubicacionId, $fechaFin);
     }
 
     public function historial(int $id): ResponseDTO {

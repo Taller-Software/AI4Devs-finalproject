@@ -149,10 +149,11 @@ class UsarHerramienta {
                     });
                 }
 
-                // 3.2. Crear nuevo registro (fecha_inicio se usa CURRENT_TIMESTAMP en el servidor)
+                // 3.2. Crear nuevo registro (fecha_inicio usa fecha del dispositivo cliente)
                 // El operario_uuid se obtiene de la sesión en el backend (seguridad)
                 const response = await api.usarHerramienta(herramientaId, {
                     ubicacion_id: parseInt(ubicacionId),
+                    fecha_inicio: new Date().toISOString(),
                     fecha_fin: this.form.fechaFin.value ? this.formatDateForMySQL(this.form.fechaFin.value) : null
                 });
 

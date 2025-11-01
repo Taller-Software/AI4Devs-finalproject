@@ -101,9 +101,9 @@ class HerramientaService {
         }
     }
 
-    public function usarHerramienta(int $id, int $ubicacionId, ?string $fechaFin): ResponseDTO {
+    public function usarHerramienta(int $id, int $ubicacionId, ?string $fechaInicio, ?string $fechaFin): ResponseDTO {
         try {
-            error_log("[USAR] Iniciando usarHerramienta - ID: $id, Ubicacion: $ubicacionId, FechaFin: " . ($fechaFin ?? 'NULL'));
+            error_log("[USAR] Iniciando usarHerramienta - ID: $id, Ubicacion: $ubicacionId, FechaInicio: " . ($fechaInicio ?? 'NULL') . ", FechaFin: " . ($fechaFin ?? 'NULL'));
             
             // Obtener UUID del operario de la sesión actual (seguridad)
             $sessionUser = \App\Utils\SessionManager::getSessionUser();
@@ -143,15 +143,19 @@ class HerramientaService {
                 );
             }
 
-            // Registrar nuevo uso (fecha_inicio usa CURRENT_TIMESTAMP automáticamente)
+            // Registrar nuevo uso (fecha_inicio usa fecha del dispositivo del cliente)
             error_log("[USAR] Insertando nuevo movimiento...");
+            
+            // Usar fecha del cliente o fallback a fecha del servidor
+            $fechaInicioFinal = $fechaInicio ?? date('Y-m-d H:i:s');
+            
             DatabaseService::executeStatement(
                 "INSERT INTO movimientos_herramienta 
                 (herramienta_id, operario_uuid, ubicacion_id, fecha_inicio, fecha_solicitud_fin)
-                VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)",
-                [$id, $operarioUuid, $ubicacionId, $fechaFin]
+                VALUES (?, ?, ?, ?, ?)",
+                [$id, $operarioUuid, $ubicacionId, $fechaInicioFinal, $fechaFin]
             );
-            error_log("[USAR] Movimiento insertado correctamente");
+            error_log("[USAR] Movimiento insertado correctamente con fecha_inicio: $fechaInicioFinal");
             return new ResponseDTO(true, "Herramienta registrada para uso correctamente");
         } catch (\Exception $e) {
             error_log("[USAR] ERROR CAPTURADO: " . $e->getMessage());
@@ -160,7 +164,7 @@ class HerramientaService {
         }
     }
 
-    public function dejarHerramienta(int $id, int $ubicacionId): ResponseDTO {
+    public function dejarHerramienta(int $id, int $ubicacionId, ?string $fechaFin = null): ResponseDTO {
         try {
             error_log("[DEJAR] Iniciando dejarHerramienta - ID: $id, Ubicacion: $ubicacionId");
             
@@ -191,15 +195,18 @@ class HerramientaService {
             $movimientoId = $movimientoActivo[0]['id'];
             error_log("[DEJAR] Movimiento activo encontrado: ID $movimientoId");
             
+            // Usar fecha del cliente o fallback a fecha del servidor
+            $fechaFinFinal = $fechaFin ?? date('Y-m-d H:i:s');
+            
             // Cerrar el movimiento actual
             DatabaseService::executeStatement(
                 "UPDATE movimientos_herramienta
-                SET fecha_fin = CURRENT_TIMESTAMP, ubicacion_id = ?
+                SET fecha_fin = ?, ubicacion_id = ?
                 WHERE id = ?",
-                [$ubicacionId, $movimientoId]
+                [$fechaFinFinal, $ubicacionId, $movimientoId]
             );
             
-            error_log("[DEJAR] Movimiento cerrado correctamente");
+            error_log("[DEJAR] Movimiento cerrado correctamente con fecha_fin: $fechaFinFinal");
             return new ResponseDTO(true, "Herramienta devuelta correctamente");
         } catch (\Exception $e) {
             error_log("[DEJAR] ERROR CAPTURADO: " . $e->getMessage());

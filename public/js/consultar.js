@@ -132,7 +132,7 @@ class ConsultarUbicacion {
                         <p class="text-slate-400 text-sm mb-1">📅 Fecha inicio</p>
                         <p class="text-white font-semibold">${this.formatDate(herramienta.fecha_inicio)}</p>
                     </div>
-                    ${herramienta.fecha_fin ? `
+                    ${herramienta.fecha_solicitud_fin ? `
                         <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
                             <p class="text-slate-400 text-sm mb-1">⏰ Fecha fin prevista</p>
                             <p class="text-orange-400 font-bold">${this.formatDate(herramienta.fecha_solicitud_fin)}</p>
