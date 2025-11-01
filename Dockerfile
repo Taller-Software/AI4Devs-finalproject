@@ -18,11 +18,13 @@ WORKDIR /app
 # Copiar archivos de la aplicación
 COPY . /app
 
-# Limpiar submódulos antiguos (como lib/Resend) que causan conflictos con Composer
-RUN rm -rf lib/Resend && echo "Submódulo lib/Resend eliminado"
+# Limpiar submódulos antiguos y cachés que puedan causar conflictos
+RUN rm -rf lib/Resend && \
+    rm -rf vendor && \
+    echo "Limpieza completada: lib/Resend y vendor eliminados"
 
-# Instalar dependencias de Composer
-RUN composer install --no-dev --optimize-autoloader
+# Instalar dependencias de Composer desde cero
+RUN composer install --no-dev --optimize-autoloader --no-cache
 
 # Exponer puerto
 EXPOSE 8080

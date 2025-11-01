@@ -6,10 +6,16 @@
 // Iniciar output buffering para capturar cualquier salida inesperada
 ob_start();
 
-// Cargar autoloader de Composer (para PHPMailer y otras dependencias)
+// Cargar autoloader de Composer (para PHPMailer, Resend y otras dependencias)
 $composerAutoloader = __DIR__ . '/../vendor/autoload.php';
 if (file_exists($composerAutoloader)) {
     require_once $composerAutoloader;
+} else {
+    error_log('[ERROR] Composer autoloader not found at: ' . $composerAutoloader);
+    header('Content-Type: application/json');
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Composer dependencies not installed']);
+    exit;
 }
 
 // Configuración inicial
