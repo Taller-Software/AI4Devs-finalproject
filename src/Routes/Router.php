@@ -199,7 +199,7 @@ class Router {
             '/api/login/send-code',
             '/api/login/validate-code',
             '/api/login/check-session',
-            '/api/csrf-token',
+            // '/api/csrf-token' debe pasar por SessionMiddleware para usar ASTILLERO_SESSION
             '/api/init',
             '/api/check-db',
             '/api/railway-debug'
