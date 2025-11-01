@@ -34,11 +34,11 @@ class HerramientaController {
                 return new ResponseDTO(false, "Sesión no válida", null, 401);
             }
 
-            // Obtener datos del array o de $_POST (compatibilidad)
-            $ubicacionId = $data['ubicacion_id'] ?? filter_input(INPUT_POST, 'ubicacion_id', FILTER_VALIDATE_INT);
-            $fechaFin = $data['fecha_fin'] ?? filter_input(INPUT_POST, 'fecha_fin', FILTER_SANITIZE_STRING);
+            // Obtener datos del array (ya viene parseado desde el endpoint)
+            $ubicacionId = $data['ubicacion_id'] ?? null;
+            $fechaFin = $data['fecha_fin'] ?? null;
             
-            error_log("[CONTROLLER] ubicacionId: $ubicacionId, fechaFin: " . ($fechaFin ?? 'NULL'));
+            error_log("[CONTROLLER] ubicacionId: " . ($ubicacionId ?? 'NULL') . ", fechaFin: " . ($fechaFin ?? 'NULL'));
 
             if (!$ubicacionId) {
                 error_log("[CONTROLLER] ERROR: Datos incompletos");
@@ -62,8 +62,8 @@ class HerramientaController {
     }
 
     public function dejar(int $id, array $data = []): ResponseDTO {
-        // Obtener datos del array o de $_POST (compatibilidad)
-        $ubicacionId = $data['ubicacion_id'] ?? filter_input(INPUT_POST, 'ubicacion_id', FILTER_VALIDATE_INT);
+        // Obtener datos del array (ya viene parseado desde el endpoint)
+        $ubicacionId = $data['ubicacion_id'] ?? null;
 
         if (!$ubicacionId) {
             return new ResponseDTO(false, "Ubicación no especificada", null, 400);
