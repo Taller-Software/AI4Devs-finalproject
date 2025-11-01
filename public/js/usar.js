@@ -26,17 +26,12 @@ class UsarHerramienta {
         try {
             const response = await api.getHerramientas();
             
-            console.log('Response completo:', response); // DEBUG
-            
             if (response.success) {
                 this.populateHerramientasSelect(response.data);
             } else {
-                console.error('Error en respuesta:', response.message);
-                console.error('Detalle del error:', response.error); // DEBUG
                 showToast('Error al cargar herramientas: ' + response.message, 'error');
             }
         } catch (error) {
-            console.error('Error al cargar herramientas:', error);
             showToast('Error al cargar herramientas', 'error');
         }
     }
@@ -48,11 +43,9 @@ class UsarHerramienta {
             if (response.success) {
                 this.populateUbicacionesSelect(response.data);
             } else {
-                console.error('Error en respuesta:', response.message);
                 showToast('Error al cargar ubicaciones: ' + response.message, 'error');
             }
         } catch (error) {
-            console.error('Error al cargar ubicaciones:', error);
             showToast('Error al cargar ubicaciones', 'error');
         }
     }
@@ -171,7 +164,6 @@ class UsarHerramienta {
             }
         } catch (error) {
             showToast('Error al registrar uso de herramienta', 'error');
-            console.error(error);
         } finally {
             // Rehabilitar botón
             if (this.btnUsar) {
