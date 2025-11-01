@@ -1,33 +1,8 @@
 <?php
 namespace App\Routes;
 
-// Cargar dependencias críticas explícitamente (Railway fix)
-require_once __DIR__ . '/../dto/ResponseDTO.php';
-require_once __DIR__ . '/../utils/Logger.php';
-require_once __DIR__ . '/../utils/Validator.php';
-require_once __DIR__ . '/../utils/Environment.php';
-require_once __DIR__ . '/../utils/SessionManager.php';
-require_once __DIR__ . '/../services/DatabaseService.php';
-require_once __DIR__ . '/../services/RateLimitService.php';
-// PHPMailer se carga automáticamente via Composer autoloader
-require_once __DIR__ . '/../services/EmailService.php';
-// Resend se carga automáticamente via Composer autoloader
-require_once __DIR__ . '/../services/EmailServiceRailway.php';
-require_once __DIR__ . '/../services/AuthService.php';
-require_once __DIR__ . '/../services/HerramientaService.php';
-require_once __DIR__ . '/../services/HistoricoService.php';
-require_once __DIR__ . '/../controllers/AuthController.php';
-require_once __DIR__ . '/../controllers/HerramientaController.php';
-require_once __DIR__ . '/../controllers/DashboardController.php';
-require_once __DIR__ . '/../controllers/HistoricoController.php';
-require_once __DIR__ . '/../middlewares/SecurityHeadersMiddleware.php';
-require_once __DIR__ . '/../middlewares/SessionMiddleware.php';
-require_once __DIR__ . '/../middlewares/CsrfMiddleware.php';
-require_once __DIR__ . '/../middlewares/AuthMiddleware.php';
-require_once __DIR__ . '/../api/AuthEndpoint.php';
-require_once __DIR__ . '/../api/HerramientasEndpoint.php';
-require_once __DIR__ . '/../api/DashboardEndpoint.php';
-require_once __DIR__ . '/../api/HistoricoEndpoint.php';
+// Todas las clases se cargan automáticamente via Composer PSR-4 autoloader
+// No necesitamos require_once manuales
 
 use App\Api\AuthEndpoint;
 use App\Api\HerramientasEndpoint;
