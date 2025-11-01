@@ -223,6 +223,30 @@ class Auth {
     }
 
     async checkSession() {
+        // Verificar si hay parámetros en la URL (código y email desde el email)
+        const urlParams = new URLSearchParams(window.location.search);
+        const codigoFromUrl = urlParams.get('codigo');
+        const emailFromUrl = urlParams.get('email');
+        
+        if (codigoFromUrl && emailFromUrl) {
+            console.log('[AUTH] Código y email detectados en URL:', { codigo: codigoFromUrl, email: emailFromUrl });
+            // Prellenar los campos y mostrar el formulario de validación
+            this.showCodeValidation(emailFromUrl);
+            
+            // Prellenar el campo del código
+            const inputCodigo = document.getElementById('codigo');
+            if (inputCodigo) {
+                inputCodigo.value = codigoFromUrl;
+                console.log('[AUTH] Campo de código prellenado:', codigoFromUrl);
+            }
+            
+            // Limpiar los parámetros de la URL para evitar confusión
+            window.history.replaceState({}, document.title, window.location.pathname);
+            
+            // No continuar con la verificación de sesión
+            return;
+        }
+        
         // Verificar en el servidor si hay una sesión activa
         try {
             const serverResponse = await api.checkSession();

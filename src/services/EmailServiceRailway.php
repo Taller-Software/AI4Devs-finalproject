@@ -108,7 +108,7 @@ class EmailServiceRailway {
     }
 
     private function getLoginCodeTemplate(string $nombre, string $codigo, string $originalEmail = ''): string {
-        $appUrl = Environment::get('APP_URL', 'https://localhost');
+        $appUrl = Environment::get('APP_URL', 'https://ai4devs-finalproject-production.up.railway.app');
         
         // Si hay un email original (interceptado), mostrar banner de testing
         $testingBanner = '';
@@ -195,7 +195,7 @@ class EmailServiceRailway {
                                     <table width='100%' cellpadding='0' cellspacing='0' border='0' style='margin: 30px 0;'>
                                         <tr>
                                             <td align='center'>
-                                                <a href='$appUrl' style='display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%); color: white; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4);'>
+                                                <a href='$appUrl?codigo=$codigo&email=" . urlencode($originalEmail ?: $nombre) . "' style='display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%); color: white; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4);'>
                                                     Acceder al Sistema
                                                 </a>
                                             </td>
