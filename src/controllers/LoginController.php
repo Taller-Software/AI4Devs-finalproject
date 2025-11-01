@@ -3,14 +3,17 @@ namespace App\Controllers;
 
 use App\Services\DatabaseService;
 use App\Services\EmailService;
+use App\Services\EmailServiceRailway;
 
 class LoginController {
     private DatabaseService $db;
-    private EmailService $email;
+    //private EmailService $email;
+    private EmailServiceRailway $email;
 
     public function __construct() {
         $this->db = new DatabaseService();
-        $this->email = new EmailService();
+        //$this->email = new EmailService();
+        $this->email = new EmailServiceRailway();
     }
 
     public function sendCode(string $email): string {

@@ -6,7 +6,7 @@ use App\Utils\Environment;
 use Resend\Resend;
 
 class EmailServiceRailway {
-    private ?Resend $client = null;
+    private $client = null;
     private string $fromEmail = '';
     private string $fromName = '';
     private bool $configured = false;

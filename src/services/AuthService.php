@@ -9,11 +9,13 @@ use App\Services\DatabaseService;
 use App\Services\RateLimitService;
 
 class AuthService {
-    private EmailService $emailService;
+    //private EmailService $emailService;
+    private EmailServiceRailway $emailService;
     private RateLimitService $rateLimitService;
 
     public function __construct() {
-        $this->emailService = new EmailService();
+        //$this->emailService = new EmailService();
+        $this->emailService = new EmailServiceRailway();
         $this->rateLimitService = new RateLimitService();
     }
 

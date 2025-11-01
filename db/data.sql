@@ -3,11 +3,11 @@ USE astillero_tools;
 -- ======================================
 -- INSERTS EN TABLA usuarios
 -- ======================================
-INSERT INTO usuarios (uuid, nombre, email)
+INSERT INTO usuarios (uuid, nombre, email, activo)
 VALUES 
-(UUID(), 'Daniel Sánchez Ruiz', 'daniel.sanchez.ruiz.1991@gmail.com'),
-(UUID(), 'El Taller del Software', 'eltallerdelsoftware@gmail.com'),
-(UUID(), 'Daniel Sánchez - Septeo', 'daniel.sanchez@septeo.com');
+(UUID(), 'Daniel Sánchez Ruiz', 'daniel.sanchez.ruiz.1991@gmail.com', true),
+(UUID(), 'El Taller del Software', 'eltallerdelsoftware@gmail.com', false),
+(UUID(), 'Daniel Sánchez - Septeo', 'daniel.sanchez@septeo.com',false);
 
 -- ======================================
 -- INSERTS EN TABLA ubicaciones
@@ -15,36 +15,36 @@ VALUES
 -- 30 ubicaciones de almacén
 INSERT INTO ubicaciones (nombre)
 VALUES
-('Principal A1'),
-('Principal A2'),
-('Principal A3'),
-('Principal A4'),
-('Principal A5'),
-('Pintura P1'),
-('Pintura P2'),
-('Carpintería C1'),
-('Carpintería C2'),
-('Carpintería C3'),
-('Soldadura S1'),
-('Soldadura S2'),
-('Soldadura S3'),
-('Electricidad E1'),
-('Electricidad E2'),
-('Electricidad E3'),
-('General Norte'),
-('General Sur'),
-('General Este'),
-('General Oeste'),
-('Auxiliar 1'),
-('Auxiliar 2'),
-('Herramientas Portátiles'),
-('Materiales Pesados'),
-('de Repuestos'),
-('de Cabos y Cables'),
-('de Motores'),
-('de Equipos de Seguridad'),
-('Temporal'),
-('Externo');
+('Almacen Principal A1'),
+('Almacen Principal A2'),
+('Almacen Principal A3'),
+('Almacen Principal A4'),
+('Almacen Principal A5'),
+('Almacen Pintura P1'),
+('Almacen Pintura P2'),
+('Almacen Carpintería C1'),
+('Almacen Carpintería C2'),
+('Almacen Carpintería C3'),
+('Almacen Soldadura S1'),
+('Almacen Soldadura S2'),
+('Almacen Soldadura S3'),
+('Almacen Electricidad E1'),
+('Almacen Electricidad E2'),
+('Almacen Electricidad E3'),
+('Almacen General Norte'),
+('Almacen General Sur'),
+('Almacen General Este'),
+('Almacen General Oeste'),
+('Almacen Auxiliar 1'),
+('Almacen Auxiliar 2'),
+('Almacen Herramientas Portátiles'),
+('Almacen Materiales Pesados'),
+('Almacen de Repuestos'),
+('Almacen de Cabos y Cables'),
+('Almacen de Motores'),
+('Almacen de Equipos de Seguridad'),
+('Almacen Temporal'),
+('Almacen Externo');
 
 -- 10 ubicaciones de puestos de trabajo
 INSERT INTO ubicaciones (nombre)
