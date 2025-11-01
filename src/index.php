@@ -108,7 +108,10 @@ spl_autoload_register(function ($class) {
     }
 });
 
-// Autoloader para las clases del proyecto
+// Autoloader para las clases del proyecto - DESACTIVADO
+// Composer PSR-4 autoloader ya maneja esto correctamente
+// El autoloader manual causaba problemas de case-sensitivity en Linux (Railway)
+/*
 spl_autoload_register(function ($class) {
     $prefix = 'App\\';
     $base_dir = __DIR__ . '/';
@@ -125,6 +128,7 @@ spl_autoload_register(function ($class) {
         require $file;
     }
 });
+*/
 
 // Inicializar el proyecto si es necesario (solo en localhost)
 // En Railway, la estructura ya está en el código fuente
