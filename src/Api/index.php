@@ -44,7 +44,7 @@ try {
     }
 
     // Procesar la petición
-    require_once __DIR__ . '/routes/api.php';
+    require_once __DIR__ . '/Routes/api.php';
 
 } catch (\Throwable $e) {
     http_response_code(500);

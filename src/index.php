@@ -84,29 +84,8 @@ try {
     exit;
 }
 
-// Autoload de clases
-// Autoloader para PHPMailer
-spl_autoload_register(function ($class) {
-    // Verificar si es una clase de PHPMailer
-    $prefix = 'PHPMailer\\PHPMailer\\';
-    $baseDir = __DIR__ . '/../lib/PHPMailer/src/';
-
-    $len = strlen($prefix);
-    if (strncmp($prefix, $class, $len) !== 0) {
-        return;
-    }
-
-    // Obtener el nombre de la clase sin el namespace
-    $relativeClass = substr($class, $len);
-    
-    // Crear la ruta del archivo
-    $file = $baseDir . $relativeClass . '.php';
-
-    // Si el archivo existe, cargarlo
-    if (file_exists($file)) {
-        require $file;
-    }
-});
+// Composer PSR-4 autoloader maneja todas las clases automáticamente
+// No necesitamos autoloaders manuales
 
 // Autoloader para las clases del proyecto - DESACTIVADO
 // Composer PSR-4 autoloader ya maneja esto correctamente

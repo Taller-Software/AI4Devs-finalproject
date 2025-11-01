@@ -13,6 +13,36 @@
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             min-height: 100vh;
         }
+        
+        /* Responsive fixes para botones de Dashboard y Histórico */
+        @media (max-width: 768px) {
+            .dashboard-card {
+                flex-direction: column !important;
+                gap: 1rem !important;
+            }
+            
+            .dashboard-card button {
+                width: 100%;
+                padding: 0.75rem 1rem !important;
+                font-size: 0.875rem !important;
+                justify-content: center;
+            }
+            
+            .dashboard-card h3 {
+                font-size: 1.25rem !important;
+            }
+            
+            .dashboard-card p {
+                font-size: 0.875rem !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .dashboard-card button {
+                padding: 0.625rem 0.75rem !important;
+                font-size: 0.8125rem !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -153,7 +183,7 @@
 
             <!-- Acceso rápido al Dashboard -->
             <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-8 rounded-xl shadow-xl border border-slate-700 hover:border-purple-500 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center dashboard-card">
                     <div class="flex items-center gap-4">
                         <div class="bg-purple-500 p-4 rounded-xl shadow-lg">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -176,7 +206,7 @@
 
             <!-- Acceso rápido al Histórico -->
             <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-8 rounded-xl shadow-xl border border-slate-700 hover:border-pink-500 transition-all duration-300 hover:shadow-2xl hover:shadow-pink-500/20">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center dashboard-card">
                     <div class="flex items-center gap-4">
                         <div class="bg-pink-500 p-4 rounded-xl shadow-lg">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">

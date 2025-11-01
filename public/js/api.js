@@ -38,7 +38,7 @@ const api = {
         
         // Agregar token CSRF si existe
         if (this.csrfToken) {
-            headers['X-CSRF-Token'] = this.csrfToken;
+            headers['X-CSRF-TOKEN'] = this.csrfToken;
         }
         
         return headers;

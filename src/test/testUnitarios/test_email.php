@@ -1,6 +1,6 @@
 <?php
 // Cargar el autoloader y Environment
-require_once __DIR__ . '/../../utils/Environment.php';
+require_once __DIR__ . '/../../Utils/Environment.php';
 
 // Inicializar Environment
 App\Utils\Environment::init();
