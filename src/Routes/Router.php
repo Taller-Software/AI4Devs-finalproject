@@ -167,13 +167,13 @@ class Router {
                     break;
 
                 case $method === 'POST' && $path === "/api/herramientas/$id/usar":
-                    error_log("[ROUTER] Entrando en POST usar - ID: $id");
-                    self::json((new HerramientasEndpoint())->usar($id));
+                    error_log("[ROUTER] Entrando en POST usar - ID: $id, JSON: " . json_encode($jsonBody));
+                    self::json((new HerramientasEndpoint())->usar($id, $jsonBody));
                     break;
 
                 case $method === 'POST' && $path === "/api/herramientas/$id/dejar":
-                    error_log("[ROUTER] Entrando en POST dejar - ID: $id");
-                    self::json((new HerramientasEndpoint())->dejar($id));
+                    error_log("[ROUTER] Entrando en POST dejar - ID: $id, JSON: " . json_encode($jsonBody));
+                    self::json((new HerramientasEndpoint())->dejar($id, $jsonBody));
                     break;
 
                 case $method === 'GET' && $path === "/api/herramientas/$id/historial":

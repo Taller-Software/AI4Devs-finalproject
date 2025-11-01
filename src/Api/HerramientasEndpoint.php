@@ -32,27 +32,30 @@ class HerramientasEndpoint {
         }
     }
 
-    public function usar(?int $id): ResponseDTO {
+    public function usar(?int $id, ?array $jsonBody = null): ResponseDTO {
         try {
             error_log("[ENDPOINT] usar() llamado con ID: " . ($id ?? 'NULL'));
+            error_log("[ENDPOINT] JSON Body recibido del Router: " . json_encode($jsonBody));
             
             if (!$id || !Validator::validateId($id)) {
                 error_log("[ENDPOINT] ID inválido: " . ($id ?? 'NULL'));
                 return new ResponseDTO(false, "ID de herramienta inválido", null, 400);
             }
 
-            // Leer datos del body JSON
-            error_log("[ENDPOINT] Leyendo body JSON...");
-            $jsonData = json_decode(file_get_contents('php://input'), true);
-            error_log("[ENDPOINT] JSON Data: " . json_encode($jsonData));
+            // Si no se pasó jsonBody desde Router, intentar leerlo (fallback)
+            if ($jsonBody === null) {
+                error_log("[ENDPOINT] jsonBody es null, leyendo de php://input...");
+                $jsonBody = json_decode(file_get_contents('php://input'), true);
+                error_log("[ENDPOINT] JSON Data leído: " . json_encode($jsonBody));
+            }
             
-            if (!$jsonData) {
+            if (!$jsonBody) {
                 error_log("[ENDPOINT] JSON inválido o vacío");
                 return new ResponseDTO(false, "Datos inválidos", null, 400);
             }
 
-            $ubicacion_id = $jsonData['ubicacion_id'] ?? null;
-            $fecha_fin = $jsonData['fecha_fin'] ?? null;
+            $ubicacion_id = $jsonBody['ubicacion_id'] ?? null;
+            $fecha_fin = $jsonBody['fecha_fin'] ?? null;
 
             // Validar campos requeridos
             if (empty($ubicacion_id)) {
@@ -76,7 +79,7 @@ class HerramientasEndpoint {
             $data = [
                 'ubicacion_id' => $ubicacion_id,
                 'fecha_fin' => $fecha_fin,
-                'operario_uuid' => $jsonData['operario_uuid'] ?? null
+                'operario_uuid' => $jsonBody['operario_uuid'] ?? null
             ];
 
             error_log("[ENDPOINT] Llamando a controller->usar() con data: " . json_encode($data));
@@ -88,20 +91,22 @@ class HerramientasEndpoint {
         }
     }
 
-    public function dejar(?int $id): ResponseDTO {
+    public function dejar(?int $id, ?array $jsonBody = null): ResponseDTO {
         try {
             if (!$id || !Validator::validateId($id)) {
                 return new ResponseDTO(false, "ID de herramienta inválido", null, 400);
             }
 
-            // Leer datos del body JSON
-            $jsonData = json_decode(file_get_contents('php://input'), true);
+            // Si no se pasó jsonBody desde Router, intentar leerlo (fallback)
+            if ($jsonBody === null) {
+                $jsonBody = json_decode(file_get_contents('php://input'), true);
+            }
             
-            if (!$jsonData) {
+            if (!$jsonBody) {
                 return new ResponseDTO(false, "Datos inválidos", null, 400);
             }
 
-            $ubicacion_id = $jsonData['ubicacion_id'] ?? null;
+            $ubicacion_id = $jsonBody['ubicacion_id'] ?? null;
             
             if (empty($ubicacion_id) || !Validator::validateId($ubicacion_id)) {
                 return new ResponseDTO(false, "ID de ubicación inválido o no proporcionado", null, 400);
