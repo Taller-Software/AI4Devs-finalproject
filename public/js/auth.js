@@ -237,8 +237,8 @@ class Auth {
             // Esperar un momento para que el DOM se actualice
             await new Promise(resolve => setTimeout(resolve, 100));
             
-            // Prellenar el campo del código
-            const inputCodigo = document.getElementById('codigo');
+            // Prellenar el campo del código (el campo se llama "code" en el HTML)
+            const inputCodigo = document.getElementById('code');
             if (inputCodigo) {
                 inputCodigo.value = codigoFromUrl;
                 console.log('[AUTH] Campo de código prellenado:', codigoFromUrl);
