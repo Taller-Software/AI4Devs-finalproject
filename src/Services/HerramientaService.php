@@ -58,7 +58,7 @@ class HerramientaService {
                        m.fecha_solicitud_fin,
                        m.ubicacion_id
                 FROM herramientas h
-                LEFT JOIN movimientos_herramienta m ON h.id = m.herramienta_id
+                LEFT JOIN movimientos_herramienta m ON h.id = m.herramienta_id AND m.fecha_fin is null
                 LEFT JOIN ubicaciones u ON m.ubicacion_id = u.id
                 LEFT JOIN usuarios o ON m.operario_uuid = o.uuid
                 WHERE h.id = ? AND h.activo = 1
