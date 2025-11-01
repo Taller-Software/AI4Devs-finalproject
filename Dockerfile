@@ -15,6 +15,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Establecer directorio de trabajo
 WORKDIR /app
 
+# Variable para invalidar cache de Docker (cambiar este valor fuerza rebuild)
+ENV CACHE_BUST=2025-11-01-v2
+
 # Copiar archivos de la aplicación
 COPY . /app
 
