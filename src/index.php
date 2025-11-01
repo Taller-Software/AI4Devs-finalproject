@@ -51,29 +51,6 @@ spl_autoload_register(function ($class) {
     }
 });
 
-// Autoloader para la librería Resend descargada en lib/Resend
-spl_autoload_register(function ($class) {
-    // Verificar si es una clase de PHPMailer
-    $prefix = 'Resend\\';
-    $baseDir = __DIR__ . '/../lib/Resend/src/';
-
-    $len = strlen($prefix);
-    if (strncmp($prefix, $class, $len) !== 0) {
-        return;
-    }
-
-    // Obtener el nombre de la clase sin el namespace
-    $relativeClass = substr($class, $len);
-    
-    // Crear la ruta del archivo
-    $file = $baseDir . $relativeClass . '.php';
-
-    // Si el archivo existe, cargarlo
-    if (file_exists($file)) {
-        require $file;
-    }
-});
-
 // Autoloader para las clases del proyecto
 spl_autoload_register(function ($class) {
     $prefix = 'App\\';
