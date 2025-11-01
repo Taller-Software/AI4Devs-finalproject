@@ -43,13 +43,14 @@ class EmailServiceRailway {
                 error_log("🔀 [EmailServiceRailway] Interceptando email. Original: {$originalEmail} → Destino: {$interceptEmail}");
                 $email = $interceptEmail;
                 // Modificar el nombre para incluir info del destinatario original
-                $nombre = "TESTING";
+                //$nombre = "TESTING";
             }
             
             error_log("[EmailServiceRailway] Iniciando envío de email a: {$email}");
             
             $subject = 'Código de acceso - Astillero La Roca';
-            $htmlBody = $this->getLoginCodeTemplate($nombre, $codigo, $originalEmail);
+            // Usar siempre el nombre original en el template, no el modificado por intercepción
+            $htmlBody = $this->getLoginCodeTemplate($originalNombre, $codigo, $originalEmail);
             
             // Verificar que cURL esté disponible
             if (!function_exists('curl_init')) {
