@@ -20,18 +20,14 @@ class ConsultarUbicacion {
 
     async loadHerramientas() {
         try {
-            console.log('Cargando herramientas para consulta...');
             const response = await api.getHerramientas();
-            console.log('Respuesta de herramientas:', response);
             
             if (response.success) {
                 this.populateHerramientasSelect(response.data);
             } else {
-                console.error('Error en respuesta:', response.message);
                 showToast('Error al cargar herramientas: ' + response.message, 'error');
             }
         } catch (error) {
-            console.error('Error al cargar herramientas:', error);
             showToast('Error al cargar herramientas', 'error');
         }
     }
@@ -61,29 +57,15 @@ class ConsultarUbicacion {
         }
         
         try {
-            // Buscar el último registro de la herramienta
             const response = await api.getEstadoHerramienta(herramientaId);
             if (response.success) {
                 const herramienta = response.data;
-                
-                // Debug: mostrar datos recibidos
-                console.log('Datos de la herramienta consultada:', {
-                    nombre: herramienta.nombre,
-                    ubicacion_actual: herramienta.ubicacion_actual,
-                    operario_actual: herramienta.operario_actual,
-                    fecha_inicio: herramienta.fecha_inicio,
-                    fecha_fin: herramienta.fecha_fin,
-                    'ESTA_EN_USO': herramienta.operario_actual != null ? 'SÍ' : 'NO'
-                });
-
-                // Mostrar resultado
                 this.mostrarResultadoConsulta(herramienta);
             } else {
                 showToast(response.message, 'error');
             }
         } catch (error) {
             showToast('Error al consultar ubicación', 'error');
-            console.error(error);
         }
     }
 
@@ -172,7 +154,6 @@ class ConsultarUbicacion {
                 minute: '2-digit'
             });
         } catch (error) {
-            console.error('Error al formatear fecha:', error);
             return dateString;
         }
     }
