@@ -6,6 +6,46 @@
 // Iniciar output buffering para capturar cualquier salida inesperada
 ob_start();
 
+// Configurar manejador de errores global para convertir errores PHP en JSON
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    // No procesar errores suprimidos con @
+    if (!(error_reporting() & $errno)) {
+        return false;
+    }
+    
+    ob_clean();
+    http_response_code(500);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error interno del servidor',
+        'error' => [
+            'type' => $errno,
+            'message' => $errstr,
+            'file' => $errfile,
+            'line' => $errline
+        ]
+    ]);
+    exit;
+});
+
+// Configurar manejador de excepciones no capturadas
+set_exception_handler(function($exception) {
+    ob_clean();
+    http_response_code(500);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error interno del servidor',
+        'error' => [
+            'message' => $exception->getMessage(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine()
+        ]
+    ]);
+    exit;
+});
+
 // Verificar si ya se cargó este script para evitar ejecución duplicada
 if (defined('SRC_INDEX_LOADED')) {
     error_log('[WARNING] src/index.php ya fue cargado previamente');
