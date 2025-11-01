@@ -6,6 +6,9 @@ nixPkgs = [
 
 [phases.install]
 cmds = [
+  'echo "=== Limpiando submódulos antiguos ==="',
+  'rm -rf lib/Resend',
+  'echo "=== Instalando dependencias de Composer ==="',
   'composer install --no-dev --optimize-autoloader',
   'echo "=== Verificando extensiones PHP ==="',
   'php -v',

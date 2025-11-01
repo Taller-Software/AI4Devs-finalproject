@@ -1,0 +1,2 @@
+# Este archivo asegura que el directorio lib/ existe
+# y que Git rastrea su estructura
