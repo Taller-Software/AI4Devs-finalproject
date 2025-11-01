@@ -33,8 +33,18 @@ class EmailServiceRailway {
             return false;
         }
         try {
+            error_log("[EmailServiceRailway] Iniciando envío de email a: {$email}");
+            
             $subject = 'Código de acceso - Sistema de Herramientas';
             $htmlBody = $this->getLoginCodeTemplate($nombre, $codigo);
+            
+            // Verificar que cURL esté disponible
+            if (!function_exists('curl_init')) {
+                error_log("❌ cURL no está disponible en este servidor PHP");
+                return false;
+            }
+            
+            error_log("[EmailServiceRailway] Preparando petición a Resend API");
             
             // Enviar email usando la API de Resend directamente con cURL
             $ch = curl_init('https://api.resend.com/emails');
@@ -44,16 +54,30 @@ class EmailServiceRailway {
                 'Authorization: Bearer ' . $this->token,
                 'Content-Type: application/json'
             ]);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+            
+            $payload = [
                 'from' => $this->fromEmail,
                 'to' => [$email],
                 'subject' => $subject,
                 'html' => $htmlBody
-            ]));
+            ];
+            
+            error_log("[EmailServiceRailway] Payload: " . json_encode($payload));
+            
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
             
             $response = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $curlError = curl_error($ch);
             curl_close($ch);
+            
+            error_log("[EmailServiceRailway] HTTP Code: {$httpCode}");
+            error_log("[EmailServiceRailway] Response: {$response}");
+            
+            if (!empty($curlError)) {
+                error_log("❌ cURL Error: {$curlError}");
+                return false;
+            }
             
             if ($httpCode === 200) {
                 $result = json_decode($response, true);
@@ -64,7 +88,8 @@ class EmailServiceRailway {
                 return false;
             }
         } catch (\Exception $e) {
-            error_log("Error al enviar email (Resend): " . $e->getMessage());
+            error_log("❌ Excepción al enviar email (Resend): " . $e->getMessage());
+            error_log("❌ Stack trace: " . $e->getTraceAsString());
             return false;
         }
     }
