@@ -22,10 +22,13 @@ class UsarHerramienta {
         try {
             const response = await api.getHerramientas();
             
+            console.log('Response completo:', response); // DEBUG
+            
             if (response.success) {
                 this.populateHerramientasSelect(response.data);
             } else {
                 console.error('Error en respuesta:', response.message);
+                console.error('Detalle del error:', response.error); // DEBUG
                 showToast('Error al cargar herramientas: ' + response.message, 'error');
             }
         } catch (error) {
