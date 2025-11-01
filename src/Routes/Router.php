@@ -112,6 +112,10 @@ class Router {
         // Extraer ID de la URL si existe
         preg_match('/\/api\/herramientas\/(\d+)/', $path, $matches);
         $id = $matches[1] ?? null;
+        
+        if ($id) {
+            error_log("[ROUTER] ID extraído: $id, Path: $path, Method: $method");
+        }
 
         try {
             switch (true) {
@@ -163,14 +167,17 @@ class Router {
                     break;
 
                 case $method === 'POST' && $path === "/api/herramientas/$id/usar":
+                    error_log("[ROUTER] Entrando en POST usar - ID: $id");
                     self::json((new HerramientasEndpoint())->usar($id));
                     break;
 
                 case $method === 'POST' && $path === "/api/herramientas/$id/dejar":
+                    error_log("[ROUTER] Entrando en POST dejar - ID: $id");
                     self::json((new HerramientasEndpoint())->dejar($id));
                     break;
 
                 case $method === 'GET' && $path === "/api/herramientas/$id/historial":
+                    error_log("[ROUTER] Entrando en GET historial - ID: $id");
                     self::json((new HerramientasEndpoint())->historial($id));
                     break;
 
@@ -187,6 +194,7 @@ class Router {
                     break;
 
                 default:
+                    error_log("[ROUTER] Ruta no encontrada - Path: $path, Method: $method, ID: " . ($id ?? 'NULL'));
                     self::json(new ResponseDTO(false, "Ruta no encontrada", null, 404));
             }
         } catch (\Exception $e) {
