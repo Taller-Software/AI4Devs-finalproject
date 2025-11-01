@@ -13,16 +13,20 @@ const api = {
 
     async getCsrfToken() {
         if (this.csrfToken) {
+            console.log('[CSRF] Token ya existe:', this.csrfToken);
             return this.csrfToken;
         }
         
         try {
+            console.log('[CSRF] Solicitando token...');
             const response = await fetch(`${API_BASE_URL}/csrf-token`, {
                 credentials: 'same-origin'
             });
             const data = await response.json();
+            console.log('[CSRF] Respuesta:', data);
             if (data.success) {
                 this.csrfToken = data.data.token;
+                console.log('[CSRF] Token obtenido:', this.csrfToken);
                 return this.csrfToken;
             }
         } catch (error) {
@@ -39,6 +43,9 @@ const api = {
         // Agregar token CSRF si existe
         if (this.csrfToken) {
             headers['X-CSRF-TOKEN'] = this.csrfToken;
+            console.log('[CSRF] Token agregado al header:', this.csrfToken);
+        } else {
+            console.warn('[CSRF] No hay token disponible para agregar');
         }
         
         return headers;
