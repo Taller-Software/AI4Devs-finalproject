@@ -22,10 +22,12 @@ class HerramientaService {
                        m.ubicacion_id
                 FROM herramientas h
                 LEFT JOIN movimientos_herramienta m ON h.id = m.herramienta_id 
+                    AND m.fecha_fin IS NULL
                     AND m.id = (
                         SELECT id 
                         FROM movimientos_herramienta 
                         WHERE herramienta_id = h.id 
+                          AND fecha_fin IS NULL
                         ORDER BY dh_created DESC 
                         LIMIT 1
                     )
