@@ -48,7 +48,7 @@ class EmailServiceRailway {
             
             error_log("[EmailServiceRailway] Iniciando envío de email a: {$email}");
             
-            $subject = 'Código de acceso - Sistema de Herramientas';
+            $subject = 'Código de acceso - Astillero La Roca';
             $htmlBody = $this->getLoginCodeTemplate($nombre, $codigo, $originalEmail);
             
             // Verificar que cURL esté disponible

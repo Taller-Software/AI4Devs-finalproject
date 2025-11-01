@@ -230,14 +230,20 @@ class Auth {
         
         if (codigoFromUrl && emailFromUrl) {
             console.log('[AUTH] Código y email detectados en URL:', { codigo: codigoFromUrl, email: emailFromUrl });
-            // Prellenar los campos y mostrar el formulario de validación
+            
+            // Mostrar el formulario de validación de código
             this.showCodeValidation(emailFromUrl);
+            
+            // Esperar un momento para que el DOM se actualice
+            await new Promise(resolve => setTimeout(resolve, 100));
             
             // Prellenar el campo del código
             const inputCodigo = document.getElementById('codigo');
             if (inputCodigo) {
                 inputCodigo.value = codigoFromUrl;
                 console.log('[AUTH] Campo de código prellenado:', codigoFromUrl);
+            } else {
+                console.error('[AUTH] No se encontró el campo de código');
             }
             
             // Limpiar los parámetros de la URL para evitar confusión
