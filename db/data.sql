@@ -6,6 +6,9 @@ USE astillero_tools;
 INSERT INTO usuarios (uuid, nombre, email, activo)
 VALUES 
 (UUID(), 'Daniel Sánchez Ruiz', 'daniel.sanchez.ruiz.1991@gmail.com', true),
+(UUID(), 'Juan Manuel Sánchez García', 'juanmas21@hotmail.com', true),
+(UUID(), 'Marcos Alonso Alesina', 'marcosalonso6b@gmail.com', true),
+(UUID(), 'Cristina Sánchez Ruiz', 'cristina_sr_96@hotmail.com', true),
 (UUID(), 'El Taller del Software', 'eltallerdelsoftware@gmail.com', false),
 (UUID(), 'Daniel Sánchez - Septeo', 'daniel.sanchez@septeo.com',false);
 

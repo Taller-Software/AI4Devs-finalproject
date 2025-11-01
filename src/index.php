@@ -66,8 +66,8 @@ if (file_exists($composerAutoloader)) {
 }
 
 // Configuración inicial
-require_once __DIR__ . '/utils/Environment.php';
-require_once __DIR__ . '/utils/Logger.php';
+require_once __DIR__ . '/Utils/Environment.php';
+require_once __DIR__ . '/Utils/Logger.php';
 
 // Cargar variables de entorno
 try {
@@ -155,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Cargar el Router explícitamente (por si el autoloader falla)
-require_once __DIR__ . '/routes/Router.php';
+require_once __DIR__ . '/Routes/Router.php';
 
 // Iniciar la aplicación
 try {
