@@ -3,6 +3,7 @@ namespace App\Controllers;
 
 use App\Services\HerramientaService;
 use App\DTO\ResponseDTO;
+use App\Utils\SessionManager;
 
 class HerramientaController {
     private HerramientaService $herramientaService;
@@ -20,8 +21,9 @@ class HerramientaController {
     }
 
     public function usar(int $id, array $data = []): ResponseDTO {
-        // Validar sesión del operario
-        if (!isset($_SESSION['uuid'])) {
+        // Validar sesión del operario usando SessionManager
+        $sessionUser = SessionManager::getSessionUser();
+        if (!$sessionUser) {
             return new ResponseDTO(false, "Sesión no válida", null, 401);
         }
 
