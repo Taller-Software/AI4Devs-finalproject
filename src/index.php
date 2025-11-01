@@ -6,6 +6,13 @@
 // Iniciar output buffering para capturar cualquier salida inesperada
 ob_start();
 
+// Verificar si ya se cargó este script para evitar ejecución duplicada
+if (defined('SRC_INDEX_LOADED')) {
+    error_log('[WARNING] src/index.php ya fue cargado previamente');
+    return;
+}
+define('SRC_INDEX_LOADED', true);
+
 // Cargar autoloader de Composer (para PHPMailer, Resend y otras dependencias)
 $composerAutoloader = __DIR__ . '/../vendor/autoload.php';
 if (file_exists($composerAutoloader)) {
