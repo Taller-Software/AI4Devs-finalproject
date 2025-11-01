@@ -18,6 +18,9 @@ WORKDIR /app
 # Copiar archivos de la aplicación
 COPY . /app
 
+# Limpiar submódulos antiguos (como lib/Resend) que causan conflictos con Composer
+RUN rm -rf lib/Resend && echo "Submódulo lib/Resend eliminado"
+
 # Instalar dependencias de Composer
 RUN composer install --no-dev --optimize-autoloader
 
