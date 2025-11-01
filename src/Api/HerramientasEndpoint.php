@@ -34,59 +34,52 @@ class HerramientasEndpoint {
 
     public function usar(?int $id, ?array $jsonBody = null): ResponseDTO {
         try {
-            error_log("[ENDPOINT] usar() llamado con ID: " . ($id ?? 'NULL'));
-            error_log("[ENDPOINT] JSON Body recibido del Router: " . json_encode($jsonBody));
-            
             if (!$id || !Validator::validateId($id)) {
-                error_log("[ENDPOINT] ID inválido: " . ($id ?? 'NULL'));
                 return new ResponseDTO(false, "ID de herramienta inválido", null, 400);
             }
 
             // Si no se pasó jsonBody desde Router, intentar leerlo (fallback)
             if ($jsonBody === null) {
-                error_log("[ENDPOINT] jsonBody es null, leyendo de php://input...");
                 $jsonBody = json_decode(file_get_contents('php://input'), true);
-                error_log("[ENDPOINT] JSON Data leído: " . json_encode($jsonBody));
             }
             
             if (!$jsonBody) {
-                error_log("[ENDPOINT] JSON inválido o vacío");
                 return new ResponseDTO(false, "Datos inválidos", null, 400);
             }
 
             $ubicacion_id = $jsonBody['ubicacion_id'] ?? null;
+            $fecha_inicio = $jsonBody['fecha_inicio'] ?? null;
             $fecha_fin = $jsonBody['fecha_fin'] ?? null;
 
             // Validar campos requeridos
             if (empty($ubicacion_id)) {
-                error_log("[ENDPOINT] ubicacion_id vacío");
                 return new ResponseDTO(false, "El campo ubicacion_id es obligatorio", null, 400);
             }
 
             // Validar ubicación
             if (!Validator::validateId($ubicacion_id)) {
-                error_log("[ENDPOINT] ubicacion_id inválido: $ubicacion_id");
                 return new ResponseDTO(false, "ID de ubicación inválido", null, 400);
+            }
+
+            // Validar fecha inicio si se proporciona
+            if (!empty($fecha_inicio) && !Validator::validateDate($fecha_inicio)) {
+                return new ResponseDTO(false, "La fecha inicio proporcionada no es válida", null, 400);
             }
 
             // Validar fecha fin si se proporciona
             if (!empty($fecha_fin) && !Validator::validateDate($fecha_fin)) {
-                error_log("[ENDPOINT] fecha_fin inválida: $fecha_fin");
                 return new ResponseDTO(false, "La fecha fin proporcionada no es válida", null, 400);
             }
 
             // Preparar los datos para el controlador
             $data = [
                 'ubicacion_id' => $ubicacion_id,
-                'fecha_fin' => $fecha_fin,
-                'operario_uuid' => $jsonBody['operario_uuid'] ?? null
+                'fecha_inicio' => $fecha_inicio,
+                'fecha_fin' => $fecha_fin
             ];
 
-            error_log("[ENDPOINT] Llamando a controller->usar() con data: " . json_encode($data));
             return $this->controller->usar($id, $data);
         } catch (\Exception $e) {
-            error_log("[ENDPOINT] ERROR capturado: " . $e->getMessage());
-            error_log("[ENDPOINT] Stack trace: " . $e->getTraceAsString());
             return new ResponseDTO(false, "Error al usar la herramienta: " . $e->getMessage(), null, 500);
         }
     }
@@ -107,14 +100,21 @@ class HerramientasEndpoint {
             }
 
             $ubicacion_id = $jsonBody['ubicacion_id'] ?? null;
+            $fecha_fin = $jsonBody['fecha_fin'] ?? null;
             
             if (empty($ubicacion_id) || !Validator::validateId($ubicacion_id)) {
                 return new ResponseDTO(false, "ID de ubicación inválido o no proporcionado", null, 400);
             }
 
+            // Validar fecha fin si se proporciona
+            if (!empty($fecha_fin) && !Validator::validateDate($fecha_fin)) {
+                return new ResponseDTO(false, "La fecha fin proporcionada no es válida", null, 400);
+            }
+
             // Preparar los datos para el controlador
             $data = [
-                'ubicacion_id' => $ubicacion_id
+                'ubicacion_id' => $ubicacion_id,
+                'fecha_fin' => $fecha_fin
             ];
 
             return $this->controller->dejar($id, $data);

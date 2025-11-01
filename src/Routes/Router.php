@@ -78,13 +78,12 @@ class Router {
         }
 
         // Inicializar el proyecto si es necesario (solo en desarrollo local)
-        // En producción (Railway), la estructura ya existe
         if (\App\Utils\Environment::isDevelopment()) {
             try {
                 $initializer = new \App\Utils\ProjectInitializer();
                 $initializer->initializeProject();
             } catch (\Exception $e) {
-                error_log('Error al inicializar el proyecto: ' . $e->getMessage());
+                // Error al inicializar proyecto
             }
         }
 
@@ -112,10 +111,6 @@ class Router {
         // Extraer ID de la URL si existe
         preg_match('/\/api\/herramientas\/(\d+)/', $path, $matches);
         $id = $matches[1] ?? null;
-        
-        if ($id) {
-            error_log("[ROUTER] ID extraído: $id, Path: $path, Method: $method");
-        }
 
         try {
             switch (true) {
@@ -167,17 +162,14 @@ class Router {
                     break;
 
                 case $method === 'POST' && $path === "/api/herramientas/$id/usar":
-                    error_log("[ROUTER] Entrando en POST usar - ID: $id, JSON: " . json_encode($jsonBody));
                     self::json((new HerramientasEndpoint())->usar($id, $jsonBody));
                     break;
 
                 case $method === 'POST' && $path === "/api/herramientas/$id/dejar":
-                    error_log("[ROUTER] Entrando en POST dejar - ID: $id, JSON: " . json_encode($jsonBody));
                     self::json((new HerramientasEndpoint())->dejar($id, $jsonBody));
                     break;
 
                 case $method === 'GET' && $path === "/api/herramientas/$id/historial":
-                    error_log("[ROUTER] Entrando en GET historial - ID: $id");
                     self::json((new HerramientasEndpoint())->historial($id));
                     break;
 
@@ -194,7 +186,6 @@ class Router {
                     break;
 
                 default:
-                    error_log("[ROUTER] Ruta no encontrada - Path: $path, Method: $method, ID: " . ($id ?? 'NULL'));
                     self::json(new ResponseDTO(false, "Ruta no encontrada", null, 404));
             }
         } catch (\Exception $e) {

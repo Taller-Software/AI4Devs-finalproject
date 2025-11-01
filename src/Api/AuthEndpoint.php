@@ -10,7 +10,6 @@ class AuthEndpoint {
     private $controller;
 
     public function __construct() {
-        error_log("[AuthEndpoint] Inicializando AuthEndpoint");
         $this->controller = new AuthController();
     }
 
@@ -69,18 +68,9 @@ class AuthEndpoint {
 
     public function getCsrfToken(): ResponseDTO {
         try {
-            // El SessionMiddleware ya inició la sesión, no hacemos session_start() aquí
-            
-            // Generar token CSRF si no existe
             if (!isset($_SESSION['csrf_token'])) {
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-                error_log("[CSRF] Token generado: " . $_SESSION['csrf_token']);
-            } else {
-                error_log("[CSRF] Token existente: " . $_SESSION['csrf_token']);
             }
-            
-            error_log("[CSRF] Session ID: " . session_id());
-            error_log("[CSRF] Session name: " . session_name());
             
             return new ResponseDTO(true, "Token CSRF obtenido", ['token' => $_SESSION['csrf_token']]);
         } catch (\Exception $e) {

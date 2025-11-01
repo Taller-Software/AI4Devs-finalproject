@@ -22,43 +22,27 @@ class HerramientaController {
 
     public function usar(int $id, array $data = []): ResponseDTO {
         try {
-            error_log("[CONTROLLER] usar() iniciado - ID: $id, Data: " . json_encode($data));
-            
-            // Validar sesión del operario usando SessionManager
-            error_log("[CONTROLLER] Obteniendo sessionUser...");
             $sessionUser = SessionManager::getSessionUser();
-            error_log("[CONTROLLER] SessionUser: " . json_encode($sessionUser));
             
             if (!$sessionUser) {
-                error_log("[CONTROLLER] ERROR: Sesión no válida");
                 return new ResponseDTO(false, "Sesión no válida", null, 401);
             }
 
-            // Obtener datos del array (ya viene parseado desde el endpoint)
             $ubicacionId = $data['ubicacion_id'] ?? null;
             $fechaInicio = $data['fecha_inicio'] ?? null;
             $fechaFin = $data['fecha_fin'] ?? null;
-            
-            error_log("[CONTROLLER] ubicacionId: " . ($ubicacionId ?? 'NULL') . ", fechaInicio: " . ($fechaInicio ?? 'NULL') . ", fechaFin: " . ($fechaFin ?? 'NULL'));
 
             if (!$ubicacionId) {
-                error_log("[CONTROLLER] ERROR: Datos incompletos");
                 return new ResponseDTO(false, "Datos incompletos", null, 400);
             }
 
-            // El operario_uuid se obtiene de la sesión en el servicio (seguridad)
-            error_log("[CONTROLLER] Llamando a usarHerramienta...");
-            $result = $this->herramientaService->usarHerramienta(
+            return $this->herramientaService->usarHerramienta(
                 $id,
                 $ubicacionId,
                 $fechaInicio,
                 $fechaFin
             );
-            error_log("[CONTROLLER] Resultado: " . json_encode($result));
-            return $result;
         } catch (\Exception $e) {
-            error_log("[CONTROLLER] ERROR CAPTURADO: " . $e->getMessage());
-            error_log("[CONTROLLER] Stack trace: " . $e->getTraceAsString());
             return new ResponseDTO(false, "Error en controlador: " . $e->getMessage(), null, 500);
         }
     }

@@ -25,15 +25,9 @@ class SessionMiddleware {
                 'samesite' => 'Lax'
             ]);
             
-            // Configurar otros parámetros de sesión
-            ini_set('session.use_strict_mode', '1'); // Solo aceptar IDs de sesión generados por el servidor
+            ini_set('session.use_strict_mode', '1');
             
-            // Iniciar la sesión
             session_start();
-            
-            error_log("[SESSION] Sesión iniciada - ID: " . session_id() . ", Name: " . session_name());
-        } else {
-            error_log("[SESSION] Sesión ya activa - ID: " . session_id() . ", Name: " . session_name());
         }
 
         // Actualizar timestamp de actividad si hay sesión activa

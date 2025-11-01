@@ -103,21 +103,15 @@ class HerramientaService {
 
     public function usarHerramienta(int $id, int $ubicacionId, ?string $fechaInicio, ?string $fechaFin): ResponseDTO {
         try {
-            error_log("[USAR] Iniciando usarHerramienta - ID: $id, Ubicacion: $ubicacionId, FechaInicio: " . ($fechaInicio ?? 'NULL') . ", FechaFin: " . ($fechaFin ?? 'NULL'));
-            
-            // Obtener UUID del operario de la sesión actual (seguridad)
             $sessionUser = \App\Utils\SessionManager::getSessionUser();
-            error_log("[USAR] SessionUser: " . json_encode($sessionUser));
             
             if (!$sessionUser) {
-                error_log("[USAR] ERROR: No hay sesión activa");
                 return new ResponseDTO(false, "No hay sesión activa", null, 401);
             }
+            
             $operarioUuid = $sessionUser['uuid'];
-            error_log("[USAR] Operario UUID: $operarioUuid");
 
-            // Verificar si la herramienta está en uso (tiene operario asignado y no ha finalizado)
-            error_log("[USAR] Verificando si herramienta está en uso...");
+            // Verificar si la herramienta está en uso
             $result = DatabaseService::executeQuery(
                 "SELECT m.*, o.nombre as operario_nombre, u.nombre as ubicacion_nombre
                 FROM movimientos_herramienta m
@@ -129,12 +123,10 @@ class HerramientaService {
                 LIMIT 1",
                 [$id]
             );
-            error_log("[USAR] Resultado query: " . json_encode($result));
 
             $usoActual = !empty($result) ? $result[0] : null;
 
             if ($usoActual) {
-                error_log("[USAR] Herramienta en uso por: {$usoActual['operario_nombre']}");
                 return new ResponseDTO(
                     false,
                     "La herramienta está siendo utilizada por {$usoActual['operario_nombre']} en {$usoActual['ubicacion_nombre']}",
@@ -143,10 +135,7 @@ class HerramientaService {
                 );
             }
 
-            // Registrar nuevo uso (fecha_inicio usa fecha del dispositivo del cliente)
-            error_log("[USAR] Insertando nuevo movimiento...");
-            
-            // Usar fecha del cliente o fallback a fecha del servidor
+            // Registrar nuevo uso
             $fechaInicioFinal = $fechaInicio ?? date('Y-m-d H:i:s');
             
             DatabaseService::executeStatement(
@@ -155,27 +144,22 @@ class HerramientaService {
                 VALUES (?, ?, ?, ?, ?)",
                 [$id, $operarioUuid, $ubicacionId, $fechaInicioFinal, $fechaFin]
             );
-            error_log("[USAR] Movimiento insertado correctamente con fecha_inicio: $fechaInicioFinal");
+            
             return new ResponseDTO(true, "Herramienta registrada para uso correctamente");
         } catch (\Exception $e) {
-            error_log("[USAR] ERROR CAPTURADO: " . $e->getMessage());
-            error_log("[USAR] Stack trace: " . $e->getTraceAsString());
             return new ResponseDTO(false, "Error al registrar uso: " . $e->getMessage(), null, 500);
         }
     }
 
     public function dejarHerramienta(int $id, int $ubicacionId, ?string $fechaFin = null): ResponseDTO {
         try {
-            error_log("[DEJAR] Iniciando dejarHerramienta - ID: $id, Ubicacion: $ubicacionId");
-            
-            // Obtener UUID del operario de la sesión actual
             $sessionUser = \App\Utils\SessionManager::getSessionUser();
+            
             if (!$sessionUser) {
-                error_log("[DEJAR] ERROR: No hay sesión activa");
                 return new ResponseDTO(false, "No hay sesión activa", null, 401);
             }
+            
             $operarioUuid = $sessionUser['uuid'];
-            error_log("[DEJAR] Operario UUID: $operarioUuid");
             
             // Verificar que existe un movimiento activo de este operario con esta herramienta
             $movimientoActivo = DatabaseService::executeQuery(
@@ -188,17 +172,12 @@ class HerramientaService {
             );
             
             if (empty($movimientoActivo)) {
-                error_log("[DEJAR] ERROR: No hay movimiento activo para este operario");
                 return new ResponseDTO(false, "No tienes esta herramienta en uso", null, 400);
             }
             
             $movimientoId = $movimientoActivo[0]['id'];
-            error_log("[DEJAR] Movimiento activo encontrado: ID $movimientoId");
-            
-            // Usar fecha del cliente o fallback a fecha del servidor
             $fechaFinFinal = $fechaFin ?? date('Y-m-d H:i:s');
             
-            // Cerrar el movimiento actual
             DatabaseService::executeStatement(
                 "UPDATE movimientos_herramienta
                 SET fecha_fin = ?, ubicacion_id = ?
@@ -206,11 +185,8 @@ class HerramientaService {
                 [$fechaFinFinal, $ubicacionId, $movimientoId]
             );
             
-            error_log("[DEJAR] Movimiento cerrado correctamente con fecha_fin: $fechaFinFinal");
             return new ResponseDTO(true, "Herramienta devuelta correctamente");
         } catch (\Exception $e) {
-            error_log("[DEJAR] ERROR CAPTURADO: " . $e->getMessage());
-            error_log("[DEJAR] Stack trace: " . $e->getTraceAsString());
             return new ResponseDTO(false, "Error al devolver herramienta: " . $e->getMessage(), null, 500);
         }
     }
