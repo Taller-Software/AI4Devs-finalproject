@@ -3,6 +3,9 @@
  * Punto de entrada para las peticiones API
  */
 
+// Iniciar output buffering para capturar cualquier salida inesperada
+ob_start();
+
 // Cargar autoloader de Composer (para PHPMailer y otras dependencias)
 $composerAutoloader = __DIR__ . '/../vendor/autoload.php';
 if (file_exists($composerAutoloader)) {
@@ -18,6 +21,7 @@ try {
     App\Utils\Environment::init();
     App\Utils\Logger::initialize();
 } catch (\RuntimeException $e) {
+    ob_clean(); // Limpiar cualquier output anterior
     header('Content-Type: application/json');
     http_response_code(500);
     echo json_encode([
@@ -84,6 +88,9 @@ if (App\Utils\Environment::isDevelopment()) {
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
+
+// Limpiar cualquier output previo (warnings, notices, etc.) antes de enviar JSON
+ob_clean();
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -98,6 +105,7 @@ try {
     // Crear instancia del router y procesar la solicitud
     \App\Routes\Router::handleRequest($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 } catch (\Exception $e) {
+    ob_clean(); // Limpiar cualquier output anterior
     error_log($e->getMessage());
     http_response_code(500);
     echo json_encode([
