@@ -7,6 +7,10 @@ class UsarHerramienta {
     }
 
     async init() {
+        // Obtener herramienta_id de la URL si existe
+        const urlParams = new URLSearchParams(window.location.search);
+        this.preselectedHerramientaId = urlParams.get('herramienta_id');
+        
         // Cargar datos iniciales
         await this.loadHerramientas();
         await this.loadUbicaciones();
@@ -61,11 +65,20 @@ class UsarHerramienta {
             return;
         }
 
-        const options = herramientas.map(h => 
-            `<option value="${h.id}">${h.nombre}</option>`
-        ).join('');
+        const options = herramientas.map(h => {
+            const isSelected = this.preselectedHerramientaId && h.id == this.preselectedHerramientaId ? 'selected' : '';
+            return `<option value="${h.id}" ${isSelected}>${h.nombre}</option>`;
+        }).join('');
 
         select.innerHTML = `<option value="">Seleccione una herramienta</option>${options}`;
+        
+        // Si hay una herramienta pre-seleccionada, mostrar mensaje
+        if (this.preselectedHerramientaId) {
+            const herramientaSeleccionada = herramientas.find(h => h.id == this.preselectedHerramientaId);
+            if (herramientaSeleccionada) {
+                showToast(`Herramienta "${herramientaSeleccionada.nombre}" seleccionada`, 'success');
+            }
+        }
     }
 
     populateUbicacionesSelect(ubicaciones) {

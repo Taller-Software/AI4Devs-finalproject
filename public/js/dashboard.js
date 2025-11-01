@@ -163,7 +163,18 @@ class Dashboard {
                         <p class="text-sm text-slate-300">
                             <span class="font-semibold">📅 Desde:</span> <span class="text-white">${this.formatDate(herramienta.fecha_inicio)}</span>
                         </p>
-                    ` : ''}
+                    ` : `
+                        <div class="mt-4 pt-3 border-t border-green-600">
+                            <button 
+                                onclick="window.location.href='usar.html?herramienta_id=${herramienta.id}'"
+                                class="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-4 py-3 rounded-lg text-sm font-bold transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                                Usar Herramienta
+                            </button>
+                        </div>
+                    `}
                 </div>
             </div>
         `;
