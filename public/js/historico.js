@@ -140,11 +140,6 @@ class Historico {
 
         // Renderizar filas
         this.historicoBody.innerHTML = movimientosPagina.map(mov => {
-            const enUso = mov.fecha_fin === null;
-            const estadoBadge = enUso 
-                ? '<span class="px-3 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-yellow-600 to-amber-600 text-white shadow-lg">⚡ En uso</span>'
-                : '<span class="px-3 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg">✓ Finalizado</span>';
-
             return `
                 <tr class="hover:bg-slate-700 transition-colors duration-200">
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-white">
@@ -161,9 +156,6 @@ class Historico {
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300">
                         ${mov.fecha_fin ? formatDate(mov.fecha_fin) : '<span class="text-slate-500 italic">-</span>'}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        ${estadoBadge}
                     </td>
                 </tr>
             `;

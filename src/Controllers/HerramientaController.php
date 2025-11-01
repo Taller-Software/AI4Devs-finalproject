@@ -21,26 +21,44 @@ class HerramientaController {
     }
 
     public function usar(int $id, array $data = []): ResponseDTO {
-        // Validar sesión del operario usando SessionManager
-        $sessionUser = SessionManager::getSessionUser();
-        if (!$sessionUser) {
-            return new ResponseDTO(false, "Sesión no válida", null, 401);
+        try {
+            error_log("[CONTROLLER] usar() iniciado - ID: $id, Data: " . json_encode($data));
+            
+            // Validar sesión del operario usando SessionManager
+            error_log("[CONTROLLER] Obteniendo sessionUser...");
+            $sessionUser = SessionManager::getSessionUser();
+            error_log("[CONTROLLER] SessionUser: " . json_encode($sessionUser));
+            
+            if (!$sessionUser) {
+                error_log("[CONTROLLER] ERROR: Sesión no válida");
+                return new ResponseDTO(false, "Sesión no válida", null, 401);
+            }
+
+            // Obtener datos del array o de $_POST (compatibilidad)
+            $ubicacionId = $data['ubicacion_id'] ?? filter_input(INPUT_POST, 'ubicacion_id', FILTER_VALIDATE_INT);
+            $fechaFin = $data['fecha_fin'] ?? filter_input(INPUT_POST, 'fecha_fin', FILTER_SANITIZE_STRING);
+            
+            error_log("[CONTROLLER] ubicacionId: $ubicacionId, fechaFin: " . ($fechaFin ?? 'NULL'));
+
+            if (!$ubicacionId) {
+                error_log("[CONTROLLER] ERROR: Datos incompletos");
+                return new ResponseDTO(false, "Datos incompletos", null, 400);
+            }
+
+            // El operario_uuid se obtiene de la sesión en el servicio (seguridad)
+            error_log("[CONTROLLER] Llamando a usarHerramienta...");
+            $result = $this->herramientaService->usarHerramienta(
+                $id,
+                $ubicacionId,
+                $fechaFin
+            );
+            error_log("[CONTROLLER] Resultado: " . json_encode($result));
+            return $result;
+        } catch (\Exception $e) {
+            error_log("[CONTROLLER] ERROR CAPTURADO: " . $e->getMessage());
+            error_log("[CONTROLLER] Stack trace: " . $e->getTraceAsString());
+            return new ResponseDTO(false, "Error en controlador: " . $e->getMessage(), null, 500);
         }
-
-        // Obtener datos del array o de $_POST (compatibilidad)
-        $ubicacionId = $data['ubicacion_id'] ?? filter_input(INPUT_POST, 'ubicacion_id', FILTER_VALIDATE_INT);
-        $fechaFin = $data['fecha_fin'] ?? filter_input(INPUT_POST, 'fecha_fin', FILTER_SANITIZE_STRING);
-
-        if (!$ubicacionId) {
-            return new ResponseDTO(false, "Datos incompletos", null, 400);
-        }
-
-        // El operario_uuid se obtiene de la sesión en el servicio (seguridad)
-        return $this->herramientaService->usarHerramienta(
-            $id,
-            $ubicacionId,
-            $fechaFin
-        );
     }
 
     public function dejar(int $id, array $data = []): ResponseDTO {
