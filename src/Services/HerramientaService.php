@@ -15,15 +15,16 @@ class HerramientaService {
                        u.nombre as ubicacion_actual,
                        o.nombre as operario_actual,
                        o.uuid as operario_uuid,
-                       m.fecha_inicio,
-                       m.fecha_fin,
-                       m.fecha_solicitud_fin,
-                       m.id as movimiento_id,
-                       m.ubicacion_id
+                       m_active.fecha_inicio,
+                       m_active.fecha_fin,
+                       m_active.fecha_solicitud_fin,
+                       m_active.id as movimiento_id,
+                       COALESCE(m_active.ubicacion_id, m_last.ubicacion_id) as ubicacion_id
                 FROM herramientas h
-                LEFT JOIN movimientos_herramienta m ON h.id = m.herramienta_id 
-                    AND m.fecha_fin IS NULL
-                    AND m.id = (
+                -- Movimiento activo (si existe)
+                LEFT JOIN movimientos_herramienta m_active ON h.id = m_active.herramienta_id 
+                    AND m_active.fecha_fin IS NULL
+                    AND m_active.id = (
                         SELECT id 
                         FROM movimientos_herramienta 
                         WHERE herramienta_id = h.id 
@@ -31,8 +32,17 @@ class HerramientaService {
                         ORDER BY dh_created DESC 
                         LIMIT 1
                     )
-                LEFT JOIN ubicaciones u ON m.ubicacion_id = u.id
-                LEFT JOIN usuarios o ON m.operario_uuid = o.uuid
+                -- Último movimiento (independiente de si está finalizado) para conocer la última ubicación
+                LEFT JOIN movimientos_herramienta m_last ON h.id = m_last.herramienta_id
+                    AND m_last.id = (
+                        SELECT id 
+                        FROM movimientos_herramienta 
+                        WHERE herramienta_id = h.id 
+                        ORDER BY dh_created DESC 
+                        LIMIT 1
+                    )
+                LEFT JOIN ubicaciones u ON u.id = COALESCE(m_active.ubicacion_id, m_last.ubicacion_id)
+                LEFT JOIN usuarios o ON m_active.operario_uuid = o.uuid
                 WHERE h.activo = 1
                 ORDER BY h.nombre
             ");
@@ -51,22 +61,28 @@ class HerramientaService {
     public function getEstadoHerramienta(int $id): ResponseDTO {
         try {
             $result = DatabaseService::executeQuery(
-                "SELECT h.*,
-                       u.nombre as ubicacion_actual,
-                       o.nombre as operario_actual,
-                       o.uuid as operario_uuid,
-                       m.fecha_inicio,
-                       m.fecha_fin,
-                       m.fecha_solicitud_fin,
-                       m.ubicacion_id
-                FROM herramientas h
-                LEFT JOIN movimientos_herramienta m ON h.id = m.herramienta_id AND m.fecha_fin is null
-                LEFT JOIN ubicaciones u ON m.ubicacion_id = u.id
-                LEFT JOIN usuarios o ON m.operario_uuid = o.uuid
-                WHERE h.id = ? AND h.activo = 1
-                ORDER BY m.dh_created DESC
-                LIMIT 1",
-                [$id]
+                    "SELECT h.*,
+                           u.nombre as ubicacion_actual,
+                           o.nombre as operario_actual,
+                           o.uuid as operario_uuid,
+                           m_active.fecha_inicio,
+                           m_active.fecha_fin,
+                           m_active.fecha_solicitud_fin,
+                           COALESCE(m_active.ubicacion_id, m_last.ubicacion_id) as ubicacion_id
+                    FROM herramientas h
+                    LEFT JOIN movimientos_herramienta m_active ON h.id = m_active.herramienta_id AND m_active.fecha_fin IS NULL
+                        AND m_active.id = (
+                            SELECT id FROM movimientos_herramienta WHERE herramienta_id = h.id AND fecha_fin IS NULL ORDER BY dh_created DESC LIMIT 1
+                        )
+                    LEFT JOIN movimientos_herramienta m_last ON h.id = m_last.herramienta_id
+                        AND m_last.id = (
+                            SELECT id FROM movimientos_herramienta WHERE herramienta_id = h.id ORDER BY dh_created DESC LIMIT 1
+                        )
+                    LEFT JOIN ubicaciones u ON u.id = COALESCE(m_active.ubicacion_id, m_last.ubicacion_id)
+                    LEFT JOIN usuarios o ON m_active.operario_uuid = o.uuid
+                    WHERE h.id = ? AND h.activo = 1
+                    LIMIT 1",
+                    [$id]
             );
             
             $herramienta = !empty($result) ? $result[0] : null;

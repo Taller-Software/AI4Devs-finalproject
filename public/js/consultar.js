@@ -135,7 +135,7 @@ class ConsultarUbicacion {
                     ${herramienta.fecha_fin ? `
                         <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
                             <p class="text-slate-400 text-sm mb-1">⏰ Fecha fin prevista</p>
-                            <p class="text-orange-400 font-bold">${this.formatDate(herramienta.fecha_fin)}</p>
+                            <p class="text-orange-400 font-bold">${this.formatDate(herramienta.fecha_solicitud_fin)}</p>
                         </div>
                     ` : '<div class="bg-slate-800 p-4 rounded-lg border border-slate-700"><p class="text-slate-400 italic text-sm">Sin fecha de finalización definida</p></div>'}
                 </div>
