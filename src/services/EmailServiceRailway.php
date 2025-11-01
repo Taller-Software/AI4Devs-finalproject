@@ -3,23 +3,21 @@
 namespace App\Services;
 
 use App\Utils\Environment;
-use Resend\Resend;
 
 class EmailServiceRailway {
-    private $client = null;
+    private string $token = '';
     private string $fromEmail = '';
     private string $fromName = '';
     private bool $configured = false;
 
     public function __construct() {
         try {
-            $token = Environment::get('RESEND_TOKEN');
+            $this->token = Environment::get('RESEND_TOKEN');
             $this->fromEmail = Environment::get('SMTP_FROM_EMAIL');
             $this->fromName = Environment::get('SMTP_FROM_NAME');
-            if (empty($token) || empty($this->fromEmail) || empty($this->fromName)) {
-                throw new \Exception("Las variables de entorno RESEND_TOKEN, RESEND_FROM o SMTP_FROM_NAME no están configuradas correctamente.");
+            if (empty($this->token) || empty($this->fromEmail) || empty($this->fromName)) {
+                throw new \Exception("Las variables de entorno RESEND_TOKEN, SMTP_FROM_EMAIL o SMTP_FROM_NAME no están configuradas correctamente.");
             }
-            $this->client = Resend::client($token);
             $this->configured = true;
         } catch (\Exception $e) {
             error_log("⚠️ No se pudo configurar EmailServiceRailway (Resend): " . $e->getMessage());
@@ -37,15 +35,34 @@ class EmailServiceRailway {
         try {
             $subject = 'Código de acceso - Sistema de Herramientas';
             $htmlBody = $this->getLoginCodeTemplate($nombre, $codigo);
-            // Resend requiere un array con los datos del email
-            $result = $this->client->emails->send([
-                'from' => $this->fromEmail,
-                'to' => $email,
-                'subject' => $subject,
-                'html' => $htmlBody,
+            
+            // Enviar email usando la API de Resend directamente con cURL
+            $ch = curl_init('https://api.resend.com/emails');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Authorization: Bearer ' . $this->token,
+                'Content-Type: application/json'
             ]);
-            // Puedes validar el resultado según la respuesta de la API de Resend
-            return isset($result['id']) && !empty($result['id']);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+                'from' => $this->fromEmail,
+                'to' => [$email],
+                'subject' => $subject,
+                'html' => $htmlBody
+            ]));
+            
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            
+            if ($httpCode === 200) {
+                $result = json_decode($response, true);
+                error_log("✅ Email enviado exitosamente a {$email}. ID: " . ($result['id'] ?? 'N/A'));
+                return isset($result['id']) && !empty($result['id']);
+            } else {
+                error_log("❌ Error al enviar email (HTTP {$httpCode}): " . $response);
+                return false;
+            }
         } catch (\Exception $e) {
             error_log("Error al enviar email (Resend): " . $e->getMessage());
             return false;
