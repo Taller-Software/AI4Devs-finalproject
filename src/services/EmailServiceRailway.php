@@ -33,10 +33,23 @@ class EmailServiceRailway {
             return false;
         }
         try {
+            // Email de intercepción para desarrollo/testing
+            $interceptEmail = Environment::get('EMAIL_INTERCEPT_TO', '');
+            $originalEmail = $email;
+            $originalNombre = $nombre;
+            
+            // Si hay email de intercepción configurado, redirigir todos los emails
+            if (!empty($interceptEmail)) {
+                error_log("🔀 [EmailServiceRailway] Interceptando email. Original: {$originalEmail} → Destino: {$interceptEmail}");
+                $email = $interceptEmail;
+                // Modificar el nombre para incluir info del destinatario original
+                $nombre = "TESTING";
+            }
+            
             error_log("[EmailServiceRailway] Iniciando envío de email a: {$email}");
             
             $subject = 'Código de acceso - Sistema de Herramientas';
-            $htmlBody = $this->getLoginCodeTemplate($nombre, $codigo);
+            $htmlBody = $this->getLoginCodeTemplate($nombre, $codigo, $originalEmail);
             
             // Verificar que cURL esté disponible
             if (!function_exists('curl_init')) {
@@ -94,8 +107,22 @@ class EmailServiceRailway {
         }
     }
 
-    private function getLoginCodeTemplate(string $nombre, string $codigo): string {
+    private function getLoginCodeTemplate(string $nombre, string $codigo, string $originalEmail = ''): string {
         $appUrl = Environment::get('APP_URL', 'https://localhost');
+        
+        // Si hay un email original (interceptado), mostrar banner de testing
+        $testingBanner = '';
+        if (!empty($originalEmail)) {
+            $testingBanner = "
+                <tr>
+                    <td style='padding: 20px; background: #f59e0b; text-align: center;'>
+                        <p style='margin: 0; color: #000; font-size: 14px; font-weight: 700;'>
+                            🧪 MODO TESTING - Email destinado originalmente a: <strong>{$originalEmail}</strong>
+                        </p>
+                    </td>
+                </tr>";
+        }
+        
         // ...existing code...
         return "
         <!DOCTYPE html>
@@ -111,6 +138,8 @@ class EmailServiceRailway {
                     <td align='center'>
                         <!-- Contenedor principal -->
                         <table width='600' cellpadding='0' cellspacing='0' border='0' style='max-width: 600px; background: #1e293b; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.04); border: 1px solid #334155;'>
+                            
+                            {$testingBanner}
                             
                             <!-- Header con logo -->
                             <tr>
