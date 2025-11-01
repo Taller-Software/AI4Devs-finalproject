@@ -113,7 +113,17 @@ class SessionManager {
     }
 
     public static function validateCsrfToken(string $token): bool {
-        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+        $sessionToken = $_SESSION['csrf_token'] ?? null;
+        error_log("[CSRF] Token en sesión: " . ($sessionToken ?? 'NULL'));
+        error_log("[CSRF] Token recibido: " . $token);
+        error_log("[CSRF] ¿Coinciden?: " . ($sessionToken === $token ? 'SI' : 'NO'));
+        
+        if (!$sessionToken) {
+            error_log("[CSRF] ERROR: No hay token en la sesión");
+            return false;
+        }
+        
+        return hash_equals($sessionToken, $token);
     }
 
     public static function endSession(): void {

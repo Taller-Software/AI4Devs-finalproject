@@ -30,6 +30,10 @@ class SessionMiddleware {
             
             // Iniciar la sesión
             session_start();
+            
+            error_log("[SESSION] Sesión iniciada - ID: " . session_id() . ", Name: " . session_name());
+        } else {
+            error_log("[SESSION] Sesión ya activa - ID: " . session_id() . ", Name: " . session_name());
         }
 
         // Actualizar timestamp de actividad si hay sesión activa
