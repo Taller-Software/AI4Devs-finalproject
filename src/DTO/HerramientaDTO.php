@@ -12,7 +12,8 @@ class HerramientaDTO {
         public readonly ?string $operario_actual = null,
         public readonly ?string $operario_uuid = null,
         public readonly ?string $fecha_inicio = null,
-        public readonly ?string $fecha_fin = null
+        public readonly ?string $fecha_fin = null,
+        public readonly ?string $fecha_solicitud_fin = null
     ) {}
 
     public static function fromArray(array $data): self {
@@ -26,7 +27,8 @@ class HerramientaDTO {
             operario_actual: $data['operario_actual'] ?? null,
             operario_uuid: $data['operario_uuid'] ?? null,
             fecha_inicio: $data['fecha_inicio'] ?? null,
-            fecha_fin: $data['fecha_fin'] ?? null
+            fecha_fin: $data['fecha_fin'] ?? null,
+            fecha_solicitud_fin: $data['fecha_solicitud_fin'] ?? null
         );
     }
 
@@ -41,7 +43,8 @@ class HerramientaDTO {
             'operario_actual' => $this->operario_actual,
             'operario_uuid' => $this->operario_uuid,
             'fecha_inicio' => $this->fecha_inicio,
-            'fecha_fin' => $this->fecha_fin
+            'fecha_fin' => $this->fecha_fin,
+            'fecha_solicitud_fin' => $this->fecha_solicitud_fin
         ];
     }
 }

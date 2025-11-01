@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS movimientos_herramienta (
     ubicacion_id INT NOT NULL,
     fecha_inicio DATETIME NOT NULL,
     fecha_fin DATETIME,
+    fecha_solicitud_fin DATETIME NULL,
     dh_created DATETIME DEFAULT CURRENT_TIMESTAMP,
     dh_updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (herramienta_id) REFERENCES herramientas(id),

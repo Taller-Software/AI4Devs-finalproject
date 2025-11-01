@@ -17,6 +17,7 @@ class HerramientaService {
                        o.uuid as operario_uuid,
                        m.fecha_inicio,
                        m.fecha_fin,
+                       m.fecha_solicitud_fin,
                        m.id as movimiento_id,
                        m.ubicacion_id
                 FROM herramientas h
@@ -54,6 +55,7 @@ class HerramientaService {
                        o.uuid as operario_uuid,
                        m.fecha_inicio,
                        m.fecha_fin,
+                       m.fecha_solicitud_fin,
                        m.ubicacion_id
                 FROM herramientas h
                 LEFT JOIN movimientos_herramienta m ON h.id = m.herramienta_id
@@ -105,6 +107,7 @@ class HerramientaService {
                 JOIN ubicaciones u ON m.ubicacion_id = u.id
                 WHERE m.herramienta_id = ? 
                   AND m.operario_uuid IS NOT NULL 
+                  AND m.fecha_fin IS NULL
                 LIMIT 1",
                 [$id]
             );
@@ -126,7 +129,7 @@ class HerramientaService {
             error_log("[USAR] Insertando nuevo movimiento...");
             DatabaseService::executeStatement(
                 "INSERT INTO movimientos_herramienta 
-                (herramienta_id, operario_uuid, ubicacion_id, fecha_inicio, fecha_fin)
+                (herramienta_id, operario_uuid, ubicacion_id, fecha_inicio, fecha_solicitud_fin)
                 VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)",
                 [$id, $operarioUuid, $ubicacionId, $fechaFin]
             );
@@ -141,32 +144,48 @@ class HerramientaService {
 
     public function dejarHerramienta(int $id, int $ubicacionId): ResponseDTO {
         try {
-            // 1. Cerrar el movimiento actual (finalizar uso por el operario)
-            // Obtener el ID del último movimiento activo
+            error_log("[DEJAR] Iniciando dejarHerramienta - ID: $id, Ubicacion: $ubicacionId");
+            
+            // Obtener UUID del operario de la sesión actual
+            $sessionUser = \App\Utils\SessionManager::getSessionUser();
+            if (!$sessionUser) {
+                error_log("[DEJAR] ERROR: No hay sesión activa");
+                return new ResponseDTO(false, "No hay sesión activa", null, 401);
+            }
+            $operarioUuid = $sessionUser['uuid'];
+            error_log("[DEJAR] Operario UUID: $operarioUuid");
+            
+            // Verificar que existe un movimiento activo de este operario con esta herramienta
+            $movimientoActivo = DatabaseService::executeQuery(
+                "SELECT id FROM movimientos_herramienta 
+                WHERE herramienta_id = ? 
+                  AND operario_uuid = ? 
+                  AND fecha_fin IS NULL
+                LIMIT 1",
+                [$id, $operarioUuid]
+            );
+            
+            if (empty($movimientoActivo)) {
+                error_log("[DEJAR] ERROR: No hay movimiento activo para este operario");
+                return new ResponseDTO(false, "No tienes esta herramienta en uso", null, 400);
+            }
+            
+            $movimientoId = $movimientoActivo[0]['id'];
+            error_log("[DEJAR] Movimiento activo encontrado: ID $movimientoId");
+            
+            // Cerrar el movimiento actual
             DatabaseService::executeStatement(
                 "UPDATE movimientos_herramienta
-                SET fecha_fin = CURRENT_TIMESTAMP
-                WHERE id = (
-                    SELECT id FROM (
-                        SELECT id FROM movimientos_herramienta 
-                        WHERE herramienta_id = ? 
-                        ORDER BY dh_created DESC 
-                        LIMIT 1
-                    ) AS ultimo_movimiento
-                )",
-                [$id]
+                SET fecha_fin = CURRENT_TIMESTAMP, ubicacion_id = ?
+                WHERE id = ?",
+                [$ubicacionId, $movimientoId]
             );
             
-            // 2. Crear nuevo registro sin operario (operario_uuid = NULL indica que está disponible)
-            DatabaseService::executeStatement(
-                "INSERT INTO movimientos_herramienta 
-                (herramienta_id, operario_uuid, ubicacion_id, fecha_inicio)
-                VALUES (?, NULL, ?, CURRENT_TIMESTAMP)",
-                [$id, $ubicacionId]
-            );
-            
+            error_log("[DEJAR] Movimiento cerrado correctamente");
             return new ResponseDTO(true, "Herramienta devuelta correctamente");
         } catch (\Exception $e) {
+            error_log("[DEJAR] ERROR CAPTURADO: " . $e->getMessage());
+            error_log("[DEJAR] Stack trace: " . $e->getTraceAsString());
             return new ResponseDTO(false, "Error al devolver herramienta: " . $e->getMessage(), null, 500);
         }
     }

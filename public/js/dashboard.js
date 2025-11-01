@@ -163,6 +163,11 @@ class Dashboard {
                         <p class="text-sm text-slate-300">
                             <span class="font-semibold">📅 Desde:</span> <span class="text-white">${this.formatDate(herramienta.fecha_inicio)}</span>
                         </p>
+                        ${herramienta.fecha_solicitud_fin ? `
+                        <p class="text-sm text-slate-300">
+                            <span class="font-semibold">⏰ Estimado hasta:</span> <span class="text-yellow-400 font-semibold">${this.formatDate(herramienta.fecha_solicitud_fin)}</span>
+                        </p>
+                        ` : ''}
                     ` : ''}
                 </div>
             </div>
