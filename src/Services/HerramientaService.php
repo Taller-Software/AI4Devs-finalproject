@@ -105,7 +105,6 @@ class HerramientaService {
                 JOIN ubicaciones u ON m.ubicacion_id = u.id
                 WHERE m.herramienta_id = ? 
                   AND m.operario_uuid IS NOT NULL 
-                  AND m.fecha_fin IS NULL
                 LIMIT 1",
                 [$id]
             );
