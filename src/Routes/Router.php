@@ -142,12 +142,12 @@ class Router {
 
                 case $method === 'GET' && $path === '/api/check-db':
                     // Ruta de verificación de base de datos
-                    require_once __DIR__ . '/../api/check-db.php';
+                    require_once __DIR__ . '/../Api/check-db.php';
                     exit;
 
                 case $method === 'GET' && $path === '/api/railway-debug':
                     // Diagnóstico de Railway (variables de entorno)
-                    require_once __DIR__ . '/../api/railway-debug.php';
+                    require_once __DIR__ . '/../Api/railway-debug.php';
                     exit;
 
                 case $method === 'POST' && $path === '/api/login/logout':
