@@ -5,7 +5,7 @@ use App\Controllers\DashboardController;
 use App\DTO\ResponseDTO;
 
 class DashboardEndpoint {
-    private $controller;
+    private DashboardController $controller;
 
     public function __construct() {
         $this->controller = new DashboardController();

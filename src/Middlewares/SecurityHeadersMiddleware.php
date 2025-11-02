@@ -7,9 +7,6 @@ class SecurityHeadersMiddleware {
         // Prevent clickjacking
         header('X-Frame-Options: DENY');
         
-        // Enable XSS protection in browsers
-        header('X-XSS-Protection: 1; mode=block');
-        
         // Prevent MIME type sniffing
         header('X-Content-Type-Options: nosniff');
         

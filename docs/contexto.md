@@ -142,7 +142,7 @@ Desarrollar una **aplicación web completa** para gestionar y controlar las herr
   2. Incluye todos los índices y restricciones
 
 - **Proceso de inicialización**:
-  1. Al acceder, el sistema mostrará el formularo de login.
+  1. Al acceder, el sistema mostrará el formulario de login.
   2. Al confirmar el formulario se verificará que existe la base de datos.
   3. Si no existe, se crea automáticamente con el archivo `schema.sql` y se insertan los datos de dummy con el archivo `data.sql`.
   4. Se verificará el login

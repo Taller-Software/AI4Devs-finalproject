@@ -5,7 +5,7 @@ use App\Controllers\HistoricoController;
 use App\DTO\ResponseDTO;
 
 class HistoricoEndpoint {
-    private $controller;
+    private HistoricoController $controller;
 
     public function __construct() {
         $this->controller = new HistoricoController();

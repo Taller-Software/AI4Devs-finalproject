@@ -2,7 +2,12 @@
 namespace Test\Funcionales;
 
 class LoginTest {
-    private $baseUrl = "http://localhost/AI4Devs-finalproject/api";
+    private $baseUrl;
+
+    public function __construct() {
+        // Lee la URL base desde variables de entorno o usa una por defecto
+        $this->baseUrl = getenv('API_BASE_URL') ?: "http://localhost/AI4Devs-finalproject/api";
+    }
 
     public function testEnviarCodigoLogin() {
         // Test: POST /api/login/send-code
