@@ -42,9 +42,7 @@ Desarrollar una **aplicación web completa** para gestionar y controlar las herr
 │ └── index.php # Punto de entrada principal
 │
 ├── /public
-│ ├── /css # Tailwind (CDN) o estilos personalizados
 │ ├── /js # Scripts JS puros (frontend)
-│ ├── /assets # Imágenes, iconos, etc.
 │ └── index.html # Página principal
 │
 ├── /docs
