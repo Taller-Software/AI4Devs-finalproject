@@ -23,13 +23,18 @@ class RateLimitService {
             // Limpiar intentos antiguos
             $this->cleanOldAttempts();
 
+            // Calcular timestamp de corte en PHP (evita problemas con INTERVAL en prepared statements)
+            $cutoff = (new \DateTimeImmutable())
+                ->sub(new \DateInterval('PT' . $this->windowSeconds . 'S'))
+                ->format('Y-m-d H:i:s');
+
             // Contar intentos fallidos recientes por email
             $emailAttempts = DatabaseService::executeQuery(
                 "SELECT COUNT(*) as count FROM login_attempts 
                  WHERE email = :email 
                  AND success = 0 
-                 AND attempt_time >= DATE_SUB(NOW(), INTERVAL :window SECOND)",
-                ['email' => $email, 'window' => $this->windowSeconds]
+                 AND attempt_time >= :cutoff",
+                ['email' => $email, 'cutoff' => $cutoff]
             );
 
             // Contar intentos fallidos recientes por IP
@@ -37,8 +42,8 @@ class RateLimitService {
                 "SELECT COUNT(*) as count FROM login_attempts 
                  WHERE ip_address = :ip 
                  AND success = 0 
-                 AND attempt_time >= DATE_SUB(NOW(), INTERVAL :window SECOND)",
-                ['ip' => $ipAddress, 'window' => $this->windowSeconds]
+                 AND attempt_time >= :cutoff",
+                ['ip' => $ipAddress, 'cutoff' => $cutoff]
             );
 
             $emailCount = $emailAttempts[0]['count'] ?? 0;
@@ -115,6 +120,11 @@ class RateLimitService {
      */
     public function resetAttempts(string $email): void {
         try {
+            // Calcular timestamp de corte en PHP
+            $cutoff = (new \DateTimeImmutable())
+                ->sub(new \DateInterval('PT' . $this->windowSeconds . 'S'))
+                ->format('Y-m-d H:i:s');
+            
             // No eliminamos, solo marcamos como exitosos los más recientes
             // Esto mantiene el historial pero "perdona" los intentos anteriores
             DatabaseService::executeStatement(
@@ -122,8 +132,8 @@ class RateLimitService {
                  SET success = 1 
                  WHERE email = :email 
                  AND success = 0 
-                 AND attempt_time >= DATE_SUB(NOW(), INTERVAL :window SECOND)",
-                ['email' => $email, 'window' => $this->windowSeconds]
+                 AND attempt_time >= :cutoff",
+                ['email' => $email, 'cutoff' => $cutoff]
             );
         } catch (\Exception $e) {
             error_log("Error reseteando intentos: " . $e->getMessage());
@@ -135,12 +145,17 @@ class RateLimitService {
      */
     public function getRemainingAttempts(string $email, string $ipAddress): int {
         try {
+            // Calcular timestamp de corte en PHP
+            $cutoff = (new \DateTimeImmutable())
+                ->sub(new \DateInterval('PT' . $this->windowSeconds . 'S'))
+                ->format('Y-m-d H:i:s');
+            
             $emailAttempts = DatabaseService::executeQuery(
                 "SELECT COUNT(*) as count FROM login_attempts 
                  WHERE email = :email 
                  AND success = 0 
-                 AND attempt_time >= DATE_SUB(NOW(), INTERVAL :window SECOND)",
-                ['email' => $email, 'window' => $this->windowSeconds]
+                 AND attempt_time >= :cutoff",
+                ['email' => $email, 'cutoff' => $cutoff]
             );
 
             $count = $emailAttempts[0]['count'] ?? 0;

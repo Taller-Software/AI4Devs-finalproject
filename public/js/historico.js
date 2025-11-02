@@ -76,15 +76,18 @@ class Historico {
                 console.log('Movimientos cargados:', this.movimientos.length);
                 this.aplicarFiltros();
                 this.actualizarUltimoRefresco();
+                return true; // Éxito
             } else {
                 console.error('Error al cargar movimientos:', response.message);
                 showToast('Error al cargar el histórico', 'error');
                 this.mostrarMensajeSinDatos();
+                return false; // Error
             }
         } catch (error) {
             console.error('Error al cargar movimientos:', error);
             showToast('Error al cargar el histórico', 'error');
             this.mostrarMensajeSinDatos();
+            return false; // Error
         }
     }
 
@@ -331,8 +334,12 @@ class Historico {
         }
 
         try {
-            await this.loadMovimientos();
-            showToast('Histórico actualizado', 'success');
+            const ok = await this.loadMovimientos();
+            // Solo mostrar toast de éxito si realmente se cargaron los datos
+            if (ok) {
+                showToast('Histórico actualizado', 'success');
+            }
+            // Si falló, loadMovimientos ya mostró el toast de error
         } catch (error) {
             console.error('Error al actualizar:', error);
             showToast('Error al actualizar el histórico', 'error');

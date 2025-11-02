@@ -135,6 +135,24 @@ class HerramientaService {
                 );
             }
 
+            // Validar que la herramienta existe y está activa
+            $herramienta = DatabaseService::executeQuery(
+                "SELECT id FROM herramientas WHERE id = ? AND activo = 1 LIMIT 1",
+                [$id]
+            );
+            if (empty($herramienta)) {
+                return new ResponseDTO(false, "Herramienta no encontrada o inactiva", null, 404);
+            }
+
+            // Validar que la ubicación existe y está activa
+            $ubicacion = DatabaseService::executeQuery(
+                "SELECT id FROM ubicaciones WHERE id = ? AND activo = 1 LIMIT 1",
+                [$ubicacionId]
+            );
+            if (empty($ubicacion)) {
+                return new ResponseDTO(false, "Ubicación no válida", null, 400);
+            }
+
             // Registrar nuevo uso usando CURRENT_TIMESTAMP del servidor
             DatabaseService::executeStatement(
                 "INSERT INTO movimientos_herramienta 
@@ -174,6 +192,15 @@ class HerramientaService {
             }
             
             $movimientoId = $movimientoActivo[0]['id'];
+            
+            // Validar que la ubicación destino existe y está activa
+            $ubicacion = DatabaseService::executeQuery(
+                "SELECT id FROM ubicaciones WHERE id = ? AND activo = 1 LIMIT 1",
+                [$ubicacionId]
+            );
+            if (empty($ubicacion)) {
+                return new ResponseDTO(false, "Ubicación no válida", null, 400);
+            }
             
             DatabaseService::executeStatement(
                 "UPDATE movimientos_herramienta
