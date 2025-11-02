@@ -141,28 +141,51 @@ class Historico {
         const fin = inicio + this.resultadosPorPagina;
         const movimientosPagina = movimientosOrdenados.slice(inicio, fin);
 
-        // Renderizar filas
-        this.historicoBody.innerHTML = movimientosPagina.map(mov => {
-            return `
-                <tr class="hover:bg-slate-700 transition-colors duration-200">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-white">
-                        ${mov.herramienta_nombre || '-'}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-400 font-medium">
-                        ${mov.operario_nombre || '-'}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300">
-                        ${mov.ubicacion_nombre || '-'}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300">
-                        ${formatDate(mov.fecha_inicio)}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300">
-                        ${mov.fecha_fin ? formatDate(mov.fecha_fin) : '<span class="text-slate-500 italic">-</span>'}
-                    </td>
-                </tr>
-            `;
-        }).join('');
+        // Renderizar filas - usando DOM API para prevenir XSS
+        this.historicoBody.innerHTML = ''; // Limpiar contenido
+        movimientosPagina.forEach(mov => {
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-slate-700 transition-colors duration-200';
+
+            // Columna: Herramienta
+            const tdHerramienta = document.createElement('td');
+            tdHerramienta.className = 'px-6 py-4 whitespace-nowrap text-sm font-semibold text-white';
+            tdHerramienta.textContent = mov.herramienta_nombre || '-';
+            tr.appendChild(tdHerramienta);
+
+            // Columna: Operario
+            const tdOperario = document.createElement('td');
+            tdOperario.className = 'px-6 py-4 whitespace-nowrap text-sm text-blue-400 font-medium';
+            tdOperario.textContent = mov.operario_nombre || '-';
+            tr.appendChild(tdOperario);
+
+            // Columna: Ubicación
+            const tdUbicacion = document.createElement('td');
+            tdUbicacion.className = 'px-6 py-4 whitespace-nowrap text-sm text-slate-300';
+            tdUbicacion.textContent = mov.ubicacion_nombre || '-';
+            tr.appendChild(tdUbicacion);
+
+            // Columna: Fecha Inicio
+            const tdFechaInicio = document.createElement('td');
+            tdFechaInicio.className = 'px-6 py-4 whitespace-nowrap text-sm text-slate-300';
+            tdFechaInicio.textContent = formatDate(mov.fecha_inicio);
+            tr.appendChild(tdFechaInicio);
+
+            // Columna: Fecha Fin
+            const tdFechaFin = document.createElement('td');
+            tdFechaFin.className = 'px-6 py-4 whitespace-nowrap text-sm text-slate-300';
+            if (mov.fecha_fin) {
+                tdFechaFin.textContent = formatDate(mov.fecha_fin);
+            } else {
+                const span = document.createElement('span');
+                span.className = 'text-slate-500 italic';
+                span.textContent = '-';
+                tdFechaFin.appendChild(span);
+            }
+            tr.appendChild(tdFechaFin);
+
+            this.historicoBody.appendChild(tr);
+        });
 
         // Actualizar contador total
         if (this.totalRegistros) {
