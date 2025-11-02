@@ -101,7 +101,7 @@ class HerramientaService {
         }
     }
 
-    public function usarHerramienta(int $id, int $ubicacionId, ?string $fechaInicio, ?string $fechaFin): ResponseDTO {
+    public function usarHerramienta(int $id, int $ubicacionId, ?string $fechaFin): ResponseDTO {
         try {
             $sessionUser = \App\Utils\SessionManager::getSessionUser();
             
@@ -135,14 +135,12 @@ class HerramientaService {
                 );
             }
 
-            // Registrar nuevo uso
-            $fechaInicioFinal = $fechaInicio ?? date('Y-m-d H:i:s');
-            
+            // Registrar nuevo uso usando CURRENT_TIMESTAMP del servidor
             DatabaseService::executeStatement(
                 "INSERT INTO movimientos_herramienta 
                 (herramienta_id, operario_uuid, ubicacion_id, fecha_inicio, fecha_solicitud_fin)
-                VALUES (?, ?, ?, ?, ?)",
-                [$id, $operarioUuid, $ubicacionId, $fechaInicioFinal, $fechaFin]
+                VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)",
+                [$id, $operarioUuid, $ubicacionId, $fechaFin]
             );
             
             return new ResponseDTO(true, "Herramienta registrada para uso correctamente");
@@ -151,7 +149,7 @@ class HerramientaService {
         }
     }
 
-    public function dejarHerramienta(int $id, int $ubicacionId, ?string $fechaFin = null): ResponseDTO {
+    public function dejarHerramienta(int $id, int $ubicacionId): ResponseDTO {
         try {
             $sessionUser = \App\Utils\SessionManager::getSessionUser();
             
@@ -176,13 +174,12 @@ class HerramientaService {
             }
             
             $movimientoId = $movimientoActivo[0]['id'];
-            $fechaFinFinal = $fechaFin ?? date('Y-m-d H:i:s');
             
             DatabaseService::executeStatement(
                 "UPDATE movimientos_herramienta
-                SET fecha_fin = ?, ubicacion_id = ?
+                SET fecha_fin = CURRENT_TIMESTAMP, ubicacion_id = ?
                 WHERE id = ?",
-                [$fechaFinFinal, $ubicacionId, $movimientoId]
+                [$ubicacionId, $movimientoId]
             );
             
             return new ResponseDTO(true, "Herramienta devuelta correctamente");

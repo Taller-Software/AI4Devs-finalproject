@@ -48,7 +48,6 @@ class HerramientasEndpoint {
             }
 
             $ubicacion_id = $jsonBody['ubicacion_id'] ?? null;
-            $fecha_inicio = $jsonBody['fecha_inicio'] ?? null;
             $fecha_fin = $jsonBody['fecha_fin'] ?? null;
 
             // Validar campos requeridos
@@ -61,11 +60,6 @@ class HerramientasEndpoint {
                 return new ResponseDTO(false, "ID de ubicación inválido", null, 400);
             }
 
-            // Validar fecha inicio si se proporciona
-            if (!empty($fecha_inicio) && !Validator::validateDate($fecha_inicio)) {
-                return new ResponseDTO(false, "La fecha inicio proporcionada no es válida", null, 400);
-            }
-
             // Validar fecha fin si se proporciona
             if (!empty($fecha_fin) && !Validator::validateDate($fecha_fin)) {
                 return new ResponseDTO(false, "La fecha fin proporcionada no es válida", null, 400);
@@ -74,7 +68,6 @@ class HerramientasEndpoint {
             // Preparar los datos para el controlador
             $data = [
                 'ubicacion_id' => $ubicacion_id,
-                'fecha_inicio' => $fecha_inicio,
                 'fecha_fin' => $fecha_fin
             ];
 
@@ -100,21 +93,14 @@ class HerramientasEndpoint {
             }
 
             $ubicacion_id = $jsonBody['ubicacion_id'] ?? null;
-            $fecha_fin = $jsonBody['fecha_fin'] ?? null;
             
             if (empty($ubicacion_id) || !Validator::validateId($ubicacion_id)) {
                 return new ResponseDTO(false, "ID de ubicación inválido o no proporcionado", null, 400);
             }
 
-            // Validar fecha fin si se proporciona
-            if (!empty($fecha_fin) && !Validator::validateDate($fecha_fin)) {
-                return new ResponseDTO(false, "La fecha fin proporcionada no es válida", null, 400);
-            }
-
             // Preparar los datos para el controlador
             $data = [
-                'ubicacion_id' => $ubicacion_id,
-                'fecha_fin' => $fecha_fin
+                'ubicacion_id' => $ubicacion_id
             ];
 
             return $this->controller->dejar($id, $data);

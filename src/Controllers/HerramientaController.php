@@ -29,7 +29,6 @@ class HerramientaController {
             }
 
             $ubicacionId = $data['ubicacion_id'] ?? null;
-            $fechaInicio = $data['fecha_inicio'] ?? null;
             $fechaFin = $data['fecha_fin'] ?? null;
 
             if (!$ubicacionId) {
@@ -39,7 +38,6 @@ class HerramientaController {
             return $this->herramientaService->usarHerramienta(
                 $id,
                 $ubicacionId,
-                $fechaInicio,
                 $fechaFin
             );
         } catch (\Exception $e) {
@@ -48,15 +46,13 @@ class HerramientaController {
     }
 
     public function dejar(int $id, array $data = []): ResponseDTO {
-        // Obtener datos del array (ya viene parseado desde el endpoint)
         $ubicacionId = $data['ubicacion_id'] ?? null;
-        $fechaFin = $data['fecha_fin'] ?? null;
 
         if (!$ubicacionId) {
             return new ResponseDTO(false, "Ubicación no especificada", null, 400);
         }
 
-        return $this->herramientaService->dejarHerramienta($id, $ubicacionId, $fechaFin);
+        return $this->herramientaService->dejarHerramienta($id, $ubicacionId);
     }
 
     public function historial(int $id): ResponseDTO {
