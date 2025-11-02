@@ -402,3 +402,17 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Inicializar instancia global cuando el DOM esté listo
+if (typeof window !== 'undefined') {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.historico = new Historico();
+            window.historico.init();
+        });
+    } else {
+        // DOM ya está listo
+        window.historico = new Historico();
+        window.historico.init();
+    }
+}
