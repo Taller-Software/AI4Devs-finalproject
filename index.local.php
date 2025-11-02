@@ -16,11 +16,19 @@ if (strpos($uri, '/AI4Devs-finalproject/api/') === 0) {
 
 // Para cualquier otra URI que comience con /AI4Devs-finalproject/, servir desde public/
 if (strpos($uri, '/AI4Devs-finalproject/') === 0) {
-    $file = __DIR__ . '/public' . str_replace('/AI4Devs-finalproject', '', $uri);
+    // Prevenir path traversal: validar que el archivo está dentro de /public
+    $publicDir = realpath(__DIR__ . '/public');
+    $relativePath = str_replace('/AI4Devs-finalproject', '', $uri);
+    $candidatePath = $publicDir . $relativePath;
+    $resolvedPath = realpath($candidatePath);
     
-    if (file_exists($file)) {
+    // Verificar que el path resuelto está dentro de public/ y es un archivo
+    if ($resolvedPath !== false && 
+        strpos($resolvedPath, $publicDir) === 0 && 
+        is_file($resolvedPath)) {
+        
         // Detectar el tipo MIME correcto
-        $ext = pathinfo($file, PATHINFO_EXTENSION);
+        $ext = pathinfo($resolvedPath, PATHINFO_EXTENSION);
         $mime_types = [
             'html' => 'text/html',
             'css' => 'text/css',
@@ -36,12 +44,12 @@ if (strpos($uri, '/AI4Devs-finalproject/') === 0) {
             header('Content-Type: ' . $mime_types[$ext]);
         }
         
-        readfile($file);
+        readfile($resolvedPath);
         exit;
     }
     
-    // Si el archivo no existe y no es una API, servir index.html
-    if (!file_exists($file) && strpos($uri, '/AI4Devs-finalproject/api/') !== 0) {
+    // Si no hay archivo estático válido dentro de /public, servir index.html
+    if (strpos($uri, '/AI4Devs-finalproject/api/') !== 0) {
         readfile(__DIR__ . '/public/index.html');
         exit;
     }

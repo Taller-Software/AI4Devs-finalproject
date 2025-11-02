@@ -1,6 +1,8 @@
 # Environment files (CRÍTICO: Contienen credenciales SMTP, DB, etc.)
 .env
 .env.production
+.env.produccion
+.env.railway
 .env.local
 .env.development
 .env.test

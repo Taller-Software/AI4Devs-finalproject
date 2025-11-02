@@ -18,13 +18,25 @@ class AuthService {
     }
 
     private function getClientIP(): string {
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            return $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            return $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } else {
-            return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        // Primero obtener REMOTE_ADDR como base segura
+        $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        
+        // Solo confiar en X-Forwarded-For si existe y validar el primer IP
+        $forwarded = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '';
+        
+        if ($forwarded) {
+            // Tomar solo el primer IP de la lista (el cliente original)
+            $ips = array_map('trim', explode(',', $forwarded));
+            $candidate = $ips[0] ?? null;
+            
+            // Validar que sea una IP válida antes de usarla
+            if ($candidate && filter_var($candidate, FILTER_VALIDATE_IP)) {
+                return $candidate;
+            }
         }
+        
+        // Si no hay X-Forwarded-For válido, usar REMOTE_ADDR
+        return $remoteIp;
     }
 
     public function sendCode(string $email): ResponseDTO {

@@ -220,6 +220,11 @@ class Auth {
         // Ya no usamos localStorage para sesiones (se usan httpOnly cookies)
         // Solo limpiamos el email temporal
         sessionStorage.removeItem('tempEmail');
+        
+        // CRÍTICO: Limpiar token CSRF cacheado para evitar 403 en siguiente login
+        if (window.api && typeof window.api === 'object') {
+            window.api.csrfToken = null;
+        }
     }
 
     async checkSession() {

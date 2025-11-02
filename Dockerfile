@@ -1,4 +1,4 @@
-# Usar imagen oficial de PHP 8.3 con Apache
+# Usar imagen oficial de PHP 8.3 CLI
 FROM php:8.3-cli
 
 # Instalar extensiones necesarias
@@ -32,5 +32,5 @@ RUN composer install --no-dev --optimize-autoloader --no-cache
 # Exponer puerto
 EXPOSE 8080
 
-# Comando para iniciar el servidor
-CMD ["php", "-d", "display_errors=1", "-d", "error_reporting=E_ALL", "-S", "0.0.0.0:8080", "-t", ".", "index.php"]
+# Comando para iniciar el servidor (PRODUCCIÓN: display_errors OFF)
+CMD ["php", "-d", "display_errors=0", "-d", "log_errors=1", "-S", "0.0.0.0:8080", "-t", ".", "index.php"]
